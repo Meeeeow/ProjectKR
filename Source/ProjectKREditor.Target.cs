@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 using UnrealBuildTool;
 using System.Collections.Generic;
 
@@ -9,7 +7,10 @@ public class ProjectKREditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V4;
-
-		ExtraModuleNames.AddRange( new string[] { "ProjectKR" } );
+		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+		ExtraModuleNames.Add("ProjectKR");
+		ExtraModuleNames.Add("ProjectKREditor");
+		bUseUnityBuild = true;
+		bUseAdaptiveUnityBuild = false;
 	}
 }

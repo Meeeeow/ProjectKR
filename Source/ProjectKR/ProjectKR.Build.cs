@@ -13,8 +13,6 @@ public class ProjectKR : ModuleRules
 			"CoreUObject",
 			"Engine",
 			"InputCore",
-			"CommonUI",
-			"EnhancedInput",
 			"Paper2D",
 		});
 
@@ -32,6 +30,10 @@ public class ProjectKR : ModuleRules
 			"UMG",
 			//--------------------------------------------------//
 			"SeedExt_Core",
+			"CommonUI",
+			"CommonInput",
+			"GameplayTags",
+			"EnhancedInput",
 		});
 
 		// Uncomment if you are using Slate UI

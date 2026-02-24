@@ -41,7 +41,6 @@ public class SeedExt_Core : ModuleRules
 			"MovieSceneTracks",
 			"CinematicCamera",
 			"UMG",
-			"CommonUI",
 			"CommonInput",
 			"GameplayTags",
 			"Renderer",
@@ -51,7 +50,6 @@ public class SeedExt_Core : ModuleRules
 			"Json",
 			"JsonUtilities",
 			"Niagara",
-			"EnhancedInput",
 			//--------------------------------------------------//
 			//"KawaiiPhysics",
 			//"FileDownloader",

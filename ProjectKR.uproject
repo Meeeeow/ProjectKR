@@ -8,6 +8,14 @@
 			"Name": "ProjectKR",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "ProjectKREditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit",
+			"AdditionalDependencies": [
+				"ProjectKR"
+			]
 		}
 	],
 	"Plugins": [
@@ -25,6 +33,10 @@
 		},
 		{
 			"Name": "CommonUI",
+			"Enabled": true
+		},
+		{
+			"Name": "GameplayGraph",
 			"Enabled": true
 		}
 	]
