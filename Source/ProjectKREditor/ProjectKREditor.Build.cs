@@ -16,9 +16,11 @@ public class ProjectKREditor : ModuleRules
 			"Paper2D",
 			"Slate",
 			"SlateCore",
+			"SeedExt_Core",
 			"ProjectKR",
 			"Landscape",
 			"LandscapeEditor",
+			"LandscapeEditorUtilities",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

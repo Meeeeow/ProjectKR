@@ -28,3 +28,5 @@ enum class ESeedExt_SubSystemTickType : uint8
 	
 	Num,
 };
+
+DECLARE_LOG_CATEGORY_EXTERN(SeedExt_Log, Log, All);

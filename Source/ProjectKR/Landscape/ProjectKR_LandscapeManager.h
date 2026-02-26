@@ -4,11 +4,24 @@
 
 #include "CoreMinimal.h"
 
+#include "SeedExt_Core/SubSystem/SeedExt_SubSystemBase.h"
+
 #include "ProjectKR_LandscapeManager.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EProjectKR_LandscapeBiomeType : uint8
+{
+	None = 0,
+	Dirt,
+	GrassA,
+	GrassB,
+	Rock,
+	SandA,
+	SandB,
+	Snow,
+	Num			UMETA(Hidden),
+};
+
 UCLASS()
 class PROJECTKR_API UProjectKR_LandscapeManager : public USeedExt_GameInstanceSubSystem
 {
