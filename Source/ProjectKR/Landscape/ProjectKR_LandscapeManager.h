@@ -14,7 +14,6 @@ enum class EProjectKR_LandscapeBiomeType : uint8
 	None = 0,
 	Dirt,
 	GrassA,
-	GrassB,
 	Rock,
 	SandA,
 	SandB,

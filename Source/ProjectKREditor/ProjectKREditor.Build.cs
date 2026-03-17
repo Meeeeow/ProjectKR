@@ -21,6 +21,8 @@ public class ProjectKREditor : ModuleRules
 			"Landscape",
 			"LandscapeEditor",
 			"LandscapeEditorUtilities",
+			"Json",
+			"JsonUtilities",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

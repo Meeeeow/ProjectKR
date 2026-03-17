@@ -54,11 +54,11 @@ float UProjectKR_LandscapeFunctionLibrary::GetRidgedNoise(float InX, float InY, 
 
 void UProjectKR_LandscapeFunctionLibrary::ApplyDomainWarp(float& InX, float& InY, float InStrength, int32 InSeed)
 {
-	float WarpX = FMath::PerlinNoise2D(FVector2D(InX * 0.0005f, InY * 0.0005f + InSeed));
-	float WarpY = FMath::PerlinNoise2D(FVector2D(InX * 0.0005f + 31.4f, InY * 0.0005f + InSeed + 7));
+	float WrapX = FMath::PerlinNoise2D(FVector2D(InX * 0.0005f, InY * 0.0005f + InSeed));
+	float WrapY = FMath::PerlinNoise2D(FVector2D(InX * 0.0005f + 31.4f, InY * 0.0005f + InSeed + 7));
 
-	InX += WarpX * InStrength;
-	InY += WarpY * InStrength;
+	InX += WrapX * InStrength;
+	InY += WrapY * InStrength;
 }
 
 float UProjectKR_LandscapeFunctionLibrary::GetTemperatureAt(float InX, float InY, int32 InSeed, float InScale)

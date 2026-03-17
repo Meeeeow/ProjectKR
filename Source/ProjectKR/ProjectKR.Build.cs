@@ -15,6 +15,8 @@ public class ProjectKR : ModuleRules
 			"InputCore",
 			"Paper2D",
 			"Landscape",
+			"Json",
+			"JsonUtilities",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
