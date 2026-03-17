@@ -1,5 +1,7 @@
 #include "ProjectKR_LandscapeGenerator.h"
 
+#include <map>
+
 #include "Landscape.h"
 #include "LandscapeImportHelper.h"
 #include "LandscapeLayerInfoObject.h"
@@ -56,22 +58,29 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 		TArray<uint8>& MapValue = LandscapeData_List.Add(It.Value().BiomeInfo.BiomeName);
 		MapValue.SetNumZeroed(SizeX * SizeY);
 	}
-	
+
 	TArray<uint16> HeightData_List;
 	HeightData_List.Init(0, SizeX*SizeY);
 	TArray<FLandscapeImportLayerInfo> LandscapeLayerData_List;
 	LandscapeLayerData_List.Reserve(LandscapeBiomeInfo_List.Num());
 	{
+		const int32 TemperatureSeed = Seed + 100;
+		const int32 HumiditySeed = Seed + 200;
+		const int32 RidgeSeed = Seed + 300;
+		
 		for(int32 Index_Height=0; Index_Height<SizeY; ++Index_Height)
 		{
 			for(int32 Index_Width=0; Index_Width<SizeX; ++Index_Width)
 			{
 				int32 Index = Index_Height * SizeX + Index_Width;
 				
-				const float MicroNoiseValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, MicroNoiseScale, Octaves, Seed);
-				const float MacroNoiseValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, MacroNoiseScale, 1, Seed + 1);
+				const float BaseNoiseValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, MicroNoiseScale, Octaves, Persistence, Lacunarity, Seed);
+				const float DetailNoiseValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, MacroNoiseScale, 3, Persistence, Lacunarity, Seed + 5);
 
-				const float CombinedNoiseValue = MicroNoiseValue * ( 1.0f + MacroNoiseValue * MacroNoiseInfluence );
+				const float RidgeNoise = UProjectKR_LandscapeFunctionLibrary::GetRidgedNoise(Index_Width, Index_Height, MacroNoiseScale * 2.0f, 4, RidgeSeed);
+				const float HeightMask = FMath::Clamp((BaseNoiseValue + 0.2f) * 1.5f, 0.0f, 1.0f);
+				
+				const float CombinedNoiseValue = FMath::Lerp(BaseNoiseValue, RidgeNoise, HeightMask * 0.5f) + (DetailNoiseValue * 0.1f);
 
 				float NormalizedNoiseValue = (CombinedNoiseValue + 1.0f) * 0.5f;
 				NormalizedNoiseValue = FMath::Pow(NormalizedNoiseValue, RedistributionFactor);
@@ -89,8 +98,8 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 				}
 				else
 				{
-					const float TemperatureValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, ClimateNoiseScale, 2, Seed + (FMath::Rand() + 100));
-					const float HumidityValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, ClimateNoiseScale, 2, Seed + (FMath::Rand() + 200));
+					const float TemperatureValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, ClimateNoiseScale, 2, Persistence, Lacunarity, TemperatureSeed);
+					const float HumidityValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, ClimateNoiseScale, 2, Persistence, Lacunarity, HumiditySeed);
 
 					float FinalTemperatureValue = (TemperatureValue * 1.5f + 1.0f) * 0.5f;
 					FinalTemperatureValue = FMath::Clamp(FinalTemperatureValue - (NormalizedNoiseValue * 0.1f), 0.0f, 1.0f);

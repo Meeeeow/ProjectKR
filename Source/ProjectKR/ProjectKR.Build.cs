@@ -14,6 +14,7 @@ public class ProjectKR : ModuleRules
 			"Engine",
 			"InputCore",
 			"Paper2D",
+			"Landscape",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {

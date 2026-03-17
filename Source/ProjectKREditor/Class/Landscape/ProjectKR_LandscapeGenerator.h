@@ -9,6 +9,7 @@
 
 #include "ProjectKR_LandscapeGenerator.generated.h"
 
+
 USTRUCT(BlueprintType)
 struct PROJECTKREDITOR_API FProjectKR_BiomeEnvironment
 {
@@ -16,10 +17,24 @@ struct PROJECTKREDITOR_API FProjectKR_BiomeEnvironment
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
 	FName BiomeName = NAME_None;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin="0.0", ClampMax="1.0"))
-	float Temperature;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin="0.0", ClampMax="1.0"))
-	float Humidity;
+
+	// 기후 타겟
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin=0,ClampMax=1))
+	float Temperature = 0.5f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin=0,ClampMax=1))
+	float Humidity = 0.5f;
+
+	// 고도 제한
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
+	float MinHeight = 0.0f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
+	float MaxHeight = 1.0f;
+
+	// 지형 특성
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
+	float HeightOffset = 0.0f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
+	float HeightMultiplier = 1.0f;
 };
 
 USTRUCT(BlueprintType)
@@ -87,18 +102,24 @@ protected:
 	float MacroNoiseInfluence = 0.5f;
 
 	/** Seed for the random number generator to ensure reproducibility. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Settings|Noise")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings")
 	int32 Seed = 1;
 
 	/** Overall scale of the noise pattern. Larger values zoom out, creating larger features. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Settings|Noise")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "KR|Landscape Settings")
 	float MicroNoiseScale = 0.005f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Settings|Noise")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "KR|Landscape Settings")
 	float ClimateNoiseScale = 0.0001f;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "KR|Landscape Settings")
+	float Persistence = 0.5f;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "KR|Landscape Settings")
+	float Lacunarity = 2.0f;
+
 	/** Number of noise layers to stack. More octaves add more detail. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Procedural Settings|Noise", meta = (ClampMin = "1", ClampMax = "8"))
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "KR|Landscape Settings",meta=(ClampMin="1",ClampMax="8"))
 	int32 Octaves = 6;
 	
 	/** Number of sections per component. */
