@@ -24,7 +24,7 @@ void IProjectKR_ExportPropertyInterface::ExportProperty(const FStringView& InSav
 		FString JsonString = FString();
 		if(FJsonObjectConverter::UStructToJsonObjectString(ExportObject->GetClass(), ExportObject, JsonString, 0, 0, 0, nullptr, false) == true)
 		{
-			FString FilePath = FString(InSaveDirectory) + FString(InSaveName) + TEXT(".json");
+			const FString FilePath = FString(InSaveDirectory) + FString(InSaveName) + TEXT(".json");
 			FFileHelper::SaveStringToFile(JsonString, *FilePath, FFileHelper::EEncodingOptions::ForceUTF8WithoutBOM);
 		}
 	}

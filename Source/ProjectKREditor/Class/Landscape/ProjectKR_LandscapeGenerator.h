@@ -64,11 +64,13 @@ protected:
 	/** Main function to generate the landscape. Accessible via a button in the Details panel. */
 	UFUNCTION(CallInEditor,Category="Landscape Generate",DisplayName="Generate Landscape",meta=(DisplayPriority="0"))
 	void TryToGenerateLandscape();
+	void CalculateBiomeWeights(const float InX, const float InY, const float InNormalizedHeight, TMap<FName, float>& OutWeightsMap) const;
 	/** Clears the currently managed landscape, if any. */
 	UFUNCTION(CallInEditor,Category="Landscape Generate",DisplayName="Clear Landscape",meta=(DisplayPriority="1"))
 	void ClearManagedLandscape();
 	UFUNCTION(CallInEditor,Category="Landscape Generate",DisplayName="Found Variables",meta=(DisplayPriority="2"))
 	void TryToFindVariables();
+	
 
 	/** Number of components in the X direction. */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings", meta=(ClampMin="1",UIMin="1"))
