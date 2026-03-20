@@ -59,6 +59,8 @@ public:
 	//~ Begin UObject Interface
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 	//~ End UObject Interface
+
+	FString GetTextureFilePath() const;
 	
 protected:
 	/** Main function to generate the landscape. Accessible via a button in the Details panel. */
@@ -70,7 +72,13 @@ protected:
 	void ClearManagedLandscape();
 	UFUNCTION(CallInEditor,Category="Landscape Generate",DisplayName="Found Variables",meta=(DisplayPriority="2"))
 	void TryToFindVariables();
-	
+
+	UFUNCTION(CallInEditor,Category="Landscape Render Virtual Texture",DisplayName="Bake Height Texture",meta=(DisplayPriority="0"))
+	void BakeHeightMap();
+	UFUNCTION(CallInEditor,Category="Landscape Render Virtual Texture",DisplayName="Bake Environment Texture",meta=(DisplayPriority="1"))
+	void BakeEnvironmentMap();
+
+	UTexture2D* SaveArrayToTexture(const FString& InAssetName, int32 InSizeX, int32 InSizeY, const TArray<FColor>& InPixel_List);
 
 	/** Number of components in the X direction. */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings", meta=(ClampMin="1",UIMin="1"))
@@ -140,6 +148,12 @@ protected:
 	TMap<EProjectKR_LandscapeBiomeType, TObjectPtr<class ULandscapeLayerInfoObject>> LandscapeBiomeInfoObject_List;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "KR|Landscape Settings")
 	TObjectPtr<class ULandscapeLayerInfoObject> DefaultLayerInfoObject = nullptr;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Texture")
+	TObjectPtr<class UTexture2D> BakedHeightMap = nullptr;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Texture")
+	TObjectPtr<class UTexture2D> BakedEnvironmentMap = nullptr;
+	
 	UPROPERTY(EditAnywhere, Category = "KR|Landscape Settings")
 	TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo> LandscapeBiomeInfo_List;
 	UPROPERTY(EditAnywhere, Category = "KR|Landscape Settings")

@@ -2,6 +2,7 @@
 
 #include <map>
 
+#include "ClearReplacementShaders.h"
 #include "Landscape.h"
 #include "LandscapeImportHelper.h"
 #include "LandscapeLayerInfoObject.h"
@@ -11,6 +12,8 @@
 #include "EngineUtils.h"
 #include "FileHelpers.h"
 #include "LandscapeSubsystem.h"
+
+#include "AssetRegistry/AssetRegistryModule.h"
 
 #include "Components/RuntimeVirtualTextureComponent.h"
 
@@ -38,6 +41,11 @@ void AProjectKR_LandscapeGenerator::PostEditChangeProperty(FPropertyChangedEvent
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	TryToFindVariables();
+}
+
+FString AProjectKR_LandscapeGenerator::GetTextureFilePath() const
+{
+	return TEXT("/Game/Landscape/BakedTexture/");
 }
 
 void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
@@ -327,4 +335,122 @@ void AProjectKR_LandscapeGenerator::TryToFindVariables()
 		ManagedBiomeVolume = World->SpawnActor<ARuntimeVirtualTextureVolume>(ARuntimeVirtualTextureVolume::StaticClass(), GetActorLocation(), GetActorRotation());
 		ManagedBiomeVolume->SetActorLabel(BiomeVolumeName.ToString());
 	}
+}
+
+void AProjectKR_LandscapeGenerator::BakeHeightMap()
+{
+	const int32 QuadsPerComponent = SectionsPerComponent * QuadsPerSection;
+	const int32 SizeX = ComponentCountX * QuadsPerComponent + 1;
+	const int32 SizeY = ComponentCountY * QuadsPerComponent + 1;
+
+	TArray<FColor> Pixel_List;
+	Pixel_List.SetNumZeroed(SizeX * SizeY);
+
+	const int32 BakedHeightSeed = FMath::Rand(); 
+
+	for(int32 Index_Y=0; Index_Y<SizeY; ++Index_Y)
+	{
+		for(int32 Index_X=0; Index_X<SizeX; Index_X++)
+		{
+			float Noise = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_X, Index_Y, MicroNoiseScale, Octaves, Persistence, Lacunarity, BakedHeightSeed);
+			float NormalizedHeight = (Noise + 1.0f) * 0.5f;
+
+			NormalizedHeight = FMath::Pow(NormalizedHeight, RedistributionFactor);
+
+			uint8 HeightByte = static_cast<uint8>(FMath::Clamp(NormalizedHeight*255.f, 0.f, 255.f));
+			Pixel_List[Index_Y * SizeX + Index_X] = FColor(HeightByte, HeightByte, HeightByte, 255.f);
+		}
+	}
+
+	TArray<FAssetData> AssetData_List;
+	{
+		FAssetRegistryModule& AssetRegistryModule = FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+		IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+		AssetRegistry.GetAssetsByPath(FName(GetTextureFilePath()), AssetData_List, true);
+	}
+
+	int32 MaxIndex = -1;
+	FString Prefix = TEXT("Texture_BakedHeightMap_");
+	for(const FAssetData& AssetData : AssetData_List)
+	{
+		FString AssetName = AssetData.AssetName.ToString();
+		if(AssetName.StartsWith(Prefix) == false)
+			continue;
+
+		FString IndexPart = AssetName.RightChop(Prefix.Len());
+		if(IndexPart.IsNumeric() == false)
+			continue;
+
+		int32 Index = FCString::Atoi(*IndexPart);
+		if(Index > MaxIndex)
+		{
+			MaxIndex = Index;
+		}
+	}
+
+	FString TextureName = FString::Printf(TEXT("Texture_BakedHeightMap_%d"), ++MaxIndex);
+
+	BakedHeightMap = SaveArrayToTexture(TextureName, SizeX, SizeY, Pixel_List);
+}
+void AProjectKR_LandscapeGenerator::BakeEnvironmentMap()
+{
+	
+}
+
+UTexture2D* AProjectKR_LandscapeGenerator::SaveArrayToTexture(const FString& InAssetName, int32 InSizeX, int32 InSizeY, const TArray<FColor>& InPixel_List)
+{
+	FString PackagePath = GetTextureFilePath() + InAssetName;
+	if(UPackage* Package = CreatePackage(*PackagePath))
+	{
+		Package->FullyLoad();
+		
+		UTexture2D* Texture = FindObject<UTexture2D>(Package, *InAssetName);
+		if(Texture == nullptr)
+		{
+			Texture = NewObject<UTexture2D>(Package, *InAssetName, RF_Public | RF_Standalone);
+		}
+
+		FTexturePlatformData* PlatformData = Texture->GetPlatformData();
+		if(PlatformData == nullptr)
+		{
+			PlatformData = new FTexturePlatformData();
+		}
+		PlatformData->SizeX = InSizeX;
+		PlatformData->SizeY = InSizeY;
+		PlatformData->PixelFormat = EPixelFormat::PF_B8G8R8A8; // FColor
+		PlatformData->Mips.Empty();
+		
+		Texture->SetPlatformData(PlatformData);
+
+		FTexture2DMipMap* MipMap = new FTexture2DMipMap();
+		PlatformData->Mips.Add(MipMap);
+		MipMap->SizeX = InSizeX;
+		MipMap->SizeY = InSizeY;
+
+		MipMap->BulkData.Lock(LOCK_READ_WRITE);
+		{
+			void* Data = MipMap->BulkData.Realloc(InPixel_List.Num() * sizeof(FColor));
+			FMemory::Memcpy(Data, InPixel_List.GetData(), InPixel_List.Num() * sizeof(FColor));
+		}
+		MipMap->BulkData.Unlock();
+		
+		Texture->Source.Init(InSizeX, InSizeY, 1, 1, ETextureSourceFormat::TSF_BGRA8, reinterpret_cast<const uint8*>(InPixel_List.GetData()));
+
+		Texture->SRGB = true;
+		Texture->CompressionSettings = TextureCompressionSettings::TC_Default;
+		Texture->UpdateResource();
+		Texture->PostEditChange();
+
+		Package->MarkPackageDirty();
+		FAssetRegistryModule::AssetCreated(Texture);
+
+		TArray<UPackage*> PackagesToSave;
+		PackagesToSave.Add(Package);
+
+		UEditorLoadingAndSavingUtils::SavePackages(PackagesToSave, true);
+
+		return Texture;
+	}
+	
+	return nullptr;
 }
