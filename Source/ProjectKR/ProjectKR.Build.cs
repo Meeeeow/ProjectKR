@@ -17,6 +17,9 @@ public class ProjectKR : ModuleRules
 			"Landscape",
 			"Json",
 			"JsonUtilities",
+			"GameplayAbilities",
+			"GameplayTags",
+			"GameplayTasks",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {
@@ -28,7 +31,6 @@ public class ProjectKR : ModuleRules
 			"Navmesh",
 			"NavigationSystem",
 			"AIModule",
-			"GameplayTasks",
 			"LevelSequence",
 			"UMG",
 			//--------------------------------------------------//

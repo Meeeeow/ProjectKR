@@ -38,6 +38,10 @@
 		{
 			"Name": "GameplayGraph",
 			"Enabled": true
+		},
+		{
+			"Name": "GameplayAbilities",
+			"Enabled": true
 		}
 	]
 }

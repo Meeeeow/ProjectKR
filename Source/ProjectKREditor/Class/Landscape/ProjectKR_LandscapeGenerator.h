@@ -79,6 +79,7 @@ protected:
 	void BakeEnvironmentMap();
 
 	UTexture2D* SaveArrayToTexture(const FString& InAssetName, int32 InSizeX, int32 InSizeY, const TArray<FColor>& InPixel_List);
+	bool LoadArrayFromTexture(UTexture2D* InTexture, TArray<FColor>& OutPixel_List);
 
 	/** Number of components in the X direction. */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings", meta=(ClampMin="1",UIMin="1"))

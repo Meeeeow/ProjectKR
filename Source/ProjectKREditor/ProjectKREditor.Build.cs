@@ -23,6 +23,11 @@ public class ProjectKREditor : ModuleRules
 			"LandscapeEditorUtilities",
 			"Json",
 			"JsonUtilities",
+			"GameplayAbilities",
+			"GameplayAbilitiesEditor",
+			"GameplayTags",
+			"GameplayTagsEditor",
+			"GameplayTasks",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

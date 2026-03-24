@@ -370,7 +370,7 @@ void AProjectKR_LandscapeGenerator::BakeHeightMap()
 	}
 
 	int32 MaxIndex = -1;
-	FString Prefix = TEXT("Texture_BakedHeightMap_");
+	const FString Prefix = TEXT("Texture_BakedHeightMap_");
 	for(const FAssetData& AssetData : AssetData_List)
 	{
 		FString AssetName = AssetData.AssetName.ToString();
@@ -394,7 +394,32 @@ void AProjectKR_LandscapeGenerator::BakeHeightMap()
 }
 void AProjectKR_LandscapeGenerator::BakeEnvironmentMap()
 {
-	
+	TArray<FColor> HeightPixel_List;
+
+	if(LoadArrayFromTexture(BakedHeightMap, HeightPixel_List) == false)
+	{
+		return;
+	}
+
+	const int32 SizeX = BakedHeightMap->GetSizeX();
+	const int32 SizeY = BakedHeightMap->GetSizeY();
+
+	TArray<FColor> TemperaturePixel_List, HumidityPixel_List, BiomePixel_List;
+	TemperaturePixel_List.SetNumUninitialized(SizeX * SizeY);
+	HumidityPixel_List.SetNumUninitialized(SizeX * SizeY);
+	BiomePixel_List.SetNumUninitialized(SizeX * SizeY);
+
+	for(int32 Index_Y=0; Index_Y<SizeY; Index_Y++)
+	{
+		for(int32 Index_X=0; Index_X<SizeX; Index_X++)
+		{
+			int32 Index = Index_Y * SizeX + Index_X;
+
+			float Height = HeightPixel_List[Index].R / 255.f;
+
+			
+		}
+	}
 }
 
 UTexture2D* AProjectKR_LandscapeGenerator::SaveArrayToTexture(const FString& InAssetName, int32 InSizeX, int32 InSizeY, const TArray<FColor>& InPixel_List)
@@ -453,4 +478,38 @@ UTexture2D* AProjectKR_LandscapeGenerator::SaveArrayToTexture(const FString& InA
 	}
 	
 	return nullptr;
+}
+bool AProjectKR_LandscapeGenerator::LoadArrayFromTexture(UTexture2D* InTexture, TArray<FColor>& OutPixel_List)
+{
+	if(InTexture == nullptr)
+	{
+		return false;
+	}
+
+	if(InTexture->Source.IsValid() == true)
+	{
+		TArray64<uint8> MipData_List;
+		InTexture->Source.GetMipData(MipData_List, 0);
+		for(const uint8& MipData : MipData_List)
+		{
+			OutPixel_List.Emplace(MipData);
+		}
+		return true;
+	}
+
+	if(FTexturePlatformData* PlatformData = InTexture->GetPlatformData(); PlatformData != nullptr && PlatformData->Mips.Num() > 0)
+	{
+		int32 SizeX = InTexture->GetSizeX();
+		int32 SizeY = InTexture->GetSizeY();
+		OutPixel_List.SetNumUninitialized(SizeX * SizeY);
+
+		if(const void* MipData = PlatformData->Mips[0].BulkData.LockReadOnly(); MipData != nullptr)
+		{
+			FMemory::Memcpy(OutPixel_List.GetData(), MipData, SizeX * SizeY * sizeof(FColor));
+			PlatformData->Mips[0].BulkData.Unlock();
+			return true;
+		}
+	}
+
+	return false;
 }
