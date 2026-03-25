@@ -25,6 +25,7 @@ void AProjectKR_SkyLight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+#if WITH_EDITOR
 void AProjectKR_SkyLight::PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -32,7 +33,7 @@ void AProjectKR_SkyLight::PostEditChangeProperty(struct FPropertyChangedEvent& P
 	ExportProperty();
 	UpdateLightVisual();
 }
-
+#endif
 void AProjectKR_SkyLight::UpdateLightVisual()
 {
 	if(USkyLightComponent* SkyLightComponent = GetLightComponent())

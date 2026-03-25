@@ -1,12 +1,10 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "ProjectKR_LightInterface.h"
 
 #include "Engine/SkyLight.h"
 
+#include "ProjectKR_LightInterface.h"
 #include "ProjectKR/Actor/Interface/ProjectKR_ExportPropertyInterface.h"
 
 #include "ProjectKR_SkyLight.generated.h"
@@ -24,7 +22,9 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
+#if WITH_EDITOR
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
+#endif
 	virtual void UpdateLightVisual() override;
 
 protected:
