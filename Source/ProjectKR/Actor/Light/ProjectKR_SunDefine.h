@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 
+#include "ProjectKR_SunDefine.generated.h"
+
 UENUM(BlueprintType)
 enum class EProjectKR_SeasonType : uint8
 {
@@ -33,7 +35,7 @@ USTRUCT(BlueprintType)
 struct FProjectKR_SunState
 {
 	GENERATED_BODY()
-
+	
 	/** 태양 고도각 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Sun")
 	float ElevationAngle = 45.0f;
