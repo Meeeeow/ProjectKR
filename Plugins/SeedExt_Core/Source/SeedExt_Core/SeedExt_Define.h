@@ -38,3 +38,7 @@ enum class ESeedExt_ClearReason : uint8
 	LoadMap			UMETA(DisplayName="LoadMap"),
 	Num,
 };
+
+#define SEEDEXT_MACROSTRING(PrefixWord,SuffixWord) PrefixWord##SuffixWord
+#define SEEDEXT_MACROSTRING_TRIPLE(PrefixWord,CenterWord,SuffixWord) PrefixWord##CenterWord##SuffixWord
+#define SEEDEXT_MACROSTRING_TEXT(Word) #Word

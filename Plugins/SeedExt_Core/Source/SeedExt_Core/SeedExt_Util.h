@@ -63,3 +63,40 @@ static T* SeedExt_SpawnActor(UObject* pInWorldContextObject, UClass* pInClass, c
 
 	return Cast<T>(pNewActor);
 }
+
+template<typename T> T* SeedExt_HexStringToPointer(const FString& InHexString)
+{
+	FString HexString = InHexString;
+	if(HexString.Contains(TEXT("0x")) == true)
+	{
+		HexString.RemoveFromStart(TEXT("0x"));
+	}
+	
+	check(HexString.Len() <= 16);
+
+#if UE_BUILD_DEBUG
+	const int32 CharCount = HexString.Len();
+	const TCHAR* CharPos = *HexString;
+
+	uint64 iOutValue = 0;
+	uint8* pByte = ((uint8*)&iOutValue)+7;
+	for(int32 Index=0; Index<16-CharCount; ++Index){	//생략된 0 처리.
+		if((Index%2) == 1){
+			*pByte = 0;
+			pByte--;
+		}
+	}
+	if((CharCount%2) == 1){	//홀수 처리.
+		*pByte = TCharToNibble(*CharPos++);
+		pByte--;
+	}
+	while( *CharPos ){
+		*pByte = TCharToNibble(*CharPos++) << 4;
+		*pByte += TCharToNibble(*CharPos++);
+		pByte--;
+	}
+	return reinterpret_cast<T*>(iOutValue);
+#else
+	return nullptr;
+#endif
+}

@@ -43,4 +43,3 @@ void AProjectKR_DirectionalLight::UpdateLightVisual()
 		SkyDirectionalLightComponent->SetIntensity(SunHeight * 10.0f);
 	}
 }
-
