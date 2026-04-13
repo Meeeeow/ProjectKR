@@ -16,6 +16,11 @@
 			"AdditionalDependencies": [
 				"ProjectKR"
 			]
+		},
+		{
+			"Name": "ProjectKRClient",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [

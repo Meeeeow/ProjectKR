@@ -106,4 +106,9 @@ public:
 
 private:
 	void ComputeSunState();
+	void ComputeBiomeInfluence();
+	FProjectKR_SunAtomsphereParams ComputeAtmosphereParams() const;
+	void ApplyAtmosphereParams(const FProjectKR_SunAtomsphereParams& InParams);
+
+	static FLinearColor ColorTemperatureToLinear(float InTemperature);
 };

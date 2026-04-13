@@ -99,30 +99,6 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 				
 				HeightData_List[Index] = HeightValue;
 
-				// FName DefaultLayerName = FName("Dirt");
-				//
-				// const float TemperatureValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, ClimateNoiseScale, 2, Persistence, Lacunarity, TemperatureSeed);
-				// const float HumidityValue = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_Width, Index_Height, ClimateNoiseScale, 2, Persistence, Lacunarity, HumiditySeed);
-				//
-				// float FinalTemperatureValue = (TemperatureValue * 1.5f + 1.0f) * 0.5f;
-				// FinalTemperatureValue = FMath::Clamp(FinalTemperatureValue - (NormalizedNoiseValue * 0.1f), 0.0f, 1.0f);
-				//
-				// float FinalHumidityValue = (HumidityValue * 1.5f + 1.0f) * 0.5f;
-				// FinalHumidityValue = FMath::Clamp(FinalHumidityValue, 0.0f, 1.0f);
-				//
-				// float MinDistance = 100.f;
-				// for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
-				// {
-				// 	const FProjectKR_BiomeEnvironment& BiomeInfo = It->Value.BiomeInfo;
-				// 	if(const float Distance = FVector2D::Distance(FVector2D(FinalTemperatureValue, FinalHumidityValue), FVector2D(BiomeInfo.Temperature, BiomeInfo.Humidity)); Distance <  MinDistance)
-				// 	{
-				// 		MinDistance = Distance;
-				// 		DefaultLayerName = BiomeInfo.BiomeName;
-				// 	}
-				// }
-				//
-				// LandscapeData_List[DefaultLayerName][Index] = 255;
-
 				TMap<FName, float> BiomeWeightsMap;
 				CalculateBiomeWeights(Index_Width, Index_Height, NormalizedNoiseValue, BiomeWeightsMap);
 

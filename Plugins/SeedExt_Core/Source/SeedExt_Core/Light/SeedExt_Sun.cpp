@@ -1,14 +1,13 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "ProjectKR_Sun.h"
+#include "SeedExt_Sun.h"
 
 #include "Components/DirectionalLightComponent.h"
 #include "Components/ExponentialHeightFogComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/SkyLightComponent.h"
 
-// Sets default values
-AProjectKR_Sun::AProjectKR_Sun()
+ASeedExt_Sun::ASeedExt_Sun()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -55,76 +54,67 @@ AProjectKR_Sun::AProjectKR_Sun()
 }
 
 // Called when the game starts or when spawned
-void AProjectKR_Sun::BeginPlay()
+void ASeedExt_Sun::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ComputeSunState();
-}
-
-void AProjectKR_Sun::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	const float DayDelta = DeltaTime * DayTimeScale / 86400.f;
-	const float SeasonDelta = DeltaTime * SeasonCycleScale / (86400.f * 365.25f);
-
-	DayTime = FMath::Fmod(DayTime + DayDelta, 1.0f);
-	SeasonCycle = FMath::Fmod(SeasonCycle + SeasonDelta, 1.0f);
-
-	const bool bWasDayTime = CurrentSunState.IsDayTime();
-	ComputeSunState();
-
-	const bool bIsDayTime = CurrentSunState.IsDayTime();
-	if(bWasDayTime != bIsDayTime)
-	{
-		OnSunrise(bIsDayTime);
-	}
-
 	
 }
 
-void AProjectKR_Sun::SetDayTime(float InNewDayTime)
+// Called every frame
+void ASeedExt_Sun::Tick(float DeltaTime)
 {
-	DayTime = FMath::Clamp(InNewDayTime, 0.0f, 1.0f);
-	ComputeSunState();
-	//ComputeBiomeInfluence();
-	//ApplyAtmosphereParams(ComputeAtmosphereParams());
-	OnBiomeInfluenceChanged(CurrentBiomeInfluence);
+	Super::Tick(DeltaTime);
 }
 
-void AProjectKR_Sun::SetSeasonType(EProjectKR_SeasonType InNewSeasonType)
+#if WITH_EDITOR
+void ASeedExt_Sun::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
+{
+	Super::PostEditChangeProperty(InEvent);
+	ComputeSunState();
+	ComputeBiomeInfluence();
+	ApplyAtmosphereParams(ComputeAtmosphereParams());
+}
+#endif
+
+void ASeedExt_Sun::SetDayTime(float InNewDayTime)
+{
+	DayTime = FMath::Clamp(InNewDayTime, 0.f, 1.f);
+	ComputeSunState();
+	ComputeBiomeInfluence();
+	ApplyAtmosphereParams(ComputeAtmosphereParams());
+	OnBiomeInfluenceChangedDelegate.Broadcast(CurrentBiomeInfluence);
+}
+void ASeedExt_Sun::SetSeasonType(ESeedExt_SeasonType InNewSeasonType)
 {
 	switch(InNewSeasonType)
 	{
-		case EProjectKR_SeasonType::Spring: SeasonCycle = 0.125f; break;
-		case EProjectKR_SeasonType::Summer: SeasonCycle = 0.375f; break;
-		case EProjectKR_SeasonType::Autumn: SeasonCycle = 0.625f; break;
-		case EProjectKR_SeasonType::Winter: SeasonCycle = 0.875f; break;
+		case ESeedExt_SeasonType::Spring: { SeasonCycle = 0.125f; break;}
+		case ESeedExt_SeasonType::Summer: { SeasonCycle = 0.375f; break;}
+		case ESeedExt_SeasonType::Autumn: { SeasonCycle = 0.625f; break;}
+		case ESeedExt_SeasonType::Winter: { SeasonCycle = 0.875f; break;}
+		default: return;
 	}
+
 	ComputeSunState();
-	//ComputeBiomeInfluence();
-	//ApplyAtmosphereParams(ComputeAtmosphereParams());
-	OnBiomeInfluenceChanged(CurrentBiomeInfluence);
+	ComputeBiomeInfluence();
+	ApplyAtmosphereParams(ComputeAtmosphereParams());
+	OnBiomeInfluenceChangedDelegate.Broadcast(CurrentBiomeInfluence);
+	OnSeasonChangedDelegate.Broadcast(CurrentSunState.SeasonType, PreviousSeasonType);
 }
 
-FProjectKR_SunInfluenceBiomeState AProjectKR_Sun::GetBiomeInfluenceStateAtLocation(const FVector& InLocation) const
+FSeedExt_SunInfluenceBiomeState ASeedExt_Sun::GetBiomeInfluenceStateAtLocation(const FVector& InLocation) const
 {
-	FProjectKR_SunInfluenceBiomeState LocalInfluence = CurrentBiomeInfluence;
- 
-	// 고도(Z)에 따른 온도 보정: 100m(10000cm) 상승마다 -0.65°C
-	// [0,1] 스케일에서 1.0 = 약 40°C 범위라고 가정하면
-	//   -0.65 / 40 = -0.016 per 100m
-	const float AltitudeKm = InLocation.Z / 100000.0f;  // cm → km
-	LocalInfluence.TemperatureOffset -= AltitudeKm * 0.016f * 10.0f;  // 1km당 -0.16
- 
-	// 고도가 높을수록 습도 감소 (기압 하강)
-	LocalInfluence.HumidityOffset -= FMath::Clamp(AltitudeKm * 0.05f, 0.0f, 0.3f);
- 
-	return LocalInfluence;
+	FSeedExt_SunInfluenceBiomeState LocalState = CurrentBiomeInfluence;
+	{
+		const float AltKm = InLocation.Z / 100000.f;
+		LocalState.TemperatureOffset -= AltKm * 0.16f;
+		LocalState.HumidityOffset -= FMath::Clamp(AltKm * 0.05f, 0.f, 0.3f);
+	}
+	
+	return LocalState;
 }
 
-void AProjectKR_Sun::ComputeSunState()
+void ASeedExt_Sun::ComputeSunState()
 {
 	// 1.	태양 적위 (Solar Declination)
 	//		하지(AnnualCycle=0.25): +23.45°, 동지(0.75): -23.45°
@@ -203,11 +193,11 @@ void AProjectKR_Sun::ComputeSunState()
 	}
 	
 	// 8. 계절 분류
-	EProjectKR_SeasonType Season;
-	if(SeasonCycle < 0.25f)			Season = EProjectKR_SeasonType::Spring;
-	else if(SeasonCycle < 0.50f)	Season = EProjectKR_SeasonType::Summer;
-	else if(SeasonCycle < 0.75f)	Season = EProjectKR_SeasonType::Autumn;
-	else							Season = EProjectKR_SeasonType::Winter;
+	ESeedExt_SeasonType Season;
+	if(SeasonCycle < 0.25f)			Season = ESeedExt_SeasonType::Spring;
+	else if(SeasonCycle < 0.50f)	Season = ESeedExt_SeasonType::Summer;
+	else if(SeasonCycle < 0.75f)	Season = ESeedExt_SeasonType::Autumn;
+	else							Season = ESeedExt_SeasonType::Winter;
 	
 	// 9. FSunState 채우기
 	CurrentSunState.ElevationAngle			= ElevDeg;
@@ -225,5 +215,103 @@ void AProjectKR_Sun::ComputeSunState()
 	const float PitchDeg = ElevDeg - 90.0f;  // DirectionalLight는 -Z 방향 기준
 	const float YawDeg = AzimuthDeg - 180.0f;
 	DirectionalLightComponent->SetWorldRotation(FRotator(PitchDeg, YawDeg, 0.0f));
+}
+void ASeedExt_Sun::ComputeBiomeInfluence()
+{
+	
+}
+FSeedExt_SunAtomsphereParams ASeedExt_Sun::ComputeAtmosphereParams() const
+{
+	const FSeedExt_SunState& SunState = CurrentSunState;
+	FSeedExt_SunAtomsphereParams SunParams;
+
+	if(SunState.ElevationAngle <= 0.0f)
+	{
+		SunParams.SunLightColor = FLinearColor(0.05f, 0.07f, 0.15f);
+	}
+	else if(SunState.ElevationAngle < 15.f)
+	{
+		SunParams.SunLightColor = FLinearColor::LerpUsingHSV(SunriseColor, NoonColor, SunState.ElevationAngle / 15.f);
+	}
+	else
+	{
+		SunParams.SunLightColor = FLinearColor::LerpUsingHSV(NoonColor * 0.9f, NoonColor, FMath::Clamp((SunState.ElevationAngle - 15.f) / 75.f, 0.f, 1.f));
+	}
+
+	if(SunState.ElevationAngle <= 0.0f)
+	{
+		SunParams.SkyColor = FLinearColor(0.005f, 0.005f, 0.02f);
+	}
+	else if(SunState.ElevationAngle < 10.0f)
+	{
+		SunParams.SkyColor = FLinearColor::LerpUsingHSV(FLinearColor(0.3f, 0.1f, 0.f), FLinearColor(0.05f, 0.15f, 0.5f), SunState.ElevationAngle / 10.f);
+	}
+	else
+	{
+		SunParams.SkyColor = FLinearColor(0.05f, 0.15f, 0.5f);
+	}
+
+	SunParams.FogDensity = FMath::Lerp(0.08f, 0.015f, FMath::Clamp(SunState.ElevationAngle / 30.f, 0.f, 1.f));
+	SunParams.SkyLightIntensity = FMath::Clamp(SunState.NormalizedIntensity * 2.0f, 0.05f, 2.f);
+
+	return SunParams;
+}
+void ASeedExt_Sun::ApplyAtmosphereParams(const FSeedExt_SunAtomsphereParams& InParams)
+{
+	if(DirectionalLightComponent != nullptr)
+	{
+		DirectionalLightComponent->SetLightColor(InParams.SunLightColor);
+		DirectionalLightComponent->SetIntensity(InParams.SunLightIntensity);
+	}
+
+	if(SkyLightComponent != nullptr)
+	{
+		SkyLightComponent->SetIntensity(InParams.SkyLightIntensity);
+		if(SkyLightComponent->bRealTimeCapture == false)
+		{
+			SkyLightComponent->RecaptureSky();
+		}
+	}
+
+	if(SkyAtmosphereComponent != nullptr)
+	{
+		SkyAtmosphereComponent->SetRayleighScatteringScale(InParams.RayleighScattering);
+	}
+
+	if(ExponentialHeightFogComponent != nullptr)
+	{
+		ExponentialHeightFogComponent->SetFogDensity(InParams.FogDensity);
+		ExponentialHeightFogComponent->SetFogInscatteringColor(InParams.SkyColor);
+	}
+}
+
+FLinearColor ASeedExt_Sun::ColorTemperatureToLinear(float InTemperature)
+{
+	InTemperature = FMath::Clamp(InTemperature, 1000.f, 15000.f);
+	const float InvT = 1000.f / InTemperature, InvT2 = InvT * InvT, InvT3 = InvT2 * InvT;
+	float x = (InTemperature < 4000.f)
+		? (-0.2661239f*InvT3 - 0.2343589f*InvT2 + 0.8776956f*InvT + 0.179910f)
+		: (-3.0258469f*InvT3 + 2.1070379f*InvT2 + 0.2226347f*InvT + 0.240390f);
+	float x2=x*x, x3=x2*x;
+	float y = (InTemperature < 2222.f)
+		? (-1.1063814f*x3 - 1.3481102f*x2 + 2.18555832f*x - 0.20219683f)
+		: ((InTemperature < 4000.f)
+			? (-0.9549476f*x3 - 1.37418593f*x2 + 2.09137015f*x - 0.16748867f)
+			: ( 3.0817580f*x3 - 5.87338670f*x2 + 3.75112997f*x - 0.37001483f));
+	float z = 1.f - x - y, Y=1.f;
+	float X = (y > 0.f) ? Y*x/y : 0.f;
+	float Z = (y > 0.f) ? Y*z/y : 0.f;
+	float R = FMath::Clamp( 3.2406f*X - 1.5372f*Y - 0.4986f*Z, 0.f, 1.f);
+	float G = FMath::Clamp(-0.9689f*X + 1.8758f*Y + 0.0415f*Z, 0.f, 1.f);
+	float B = FMath::Clamp( 0.0557f*X - 0.2040f*Y + 1.0570f*Z, 0.f, 1.f);
+	const float M = FMath::Max3(R,G,B);
+	if(M > KINDA_SMALL_NUMBER)
+	{
+		R/=M;
+		G/=M;
+		B/=M;
+	}
+	
+	return FLinearColor(R,G,B);
 }
 
