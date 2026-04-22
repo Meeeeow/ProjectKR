@@ -2,8 +2,6 @@
 
 #include "ProjectKR_SpringArmComponent.h"
 
-#include "ProjectKR/Actor/ProjectKR_CharacterInstance.h"
-
 UProjectKR_SpringArmComponent::UProjectKR_SpringArmComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;

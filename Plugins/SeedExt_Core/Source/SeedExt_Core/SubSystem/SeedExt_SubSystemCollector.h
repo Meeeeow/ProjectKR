@@ -83,8 +83,8 @@ public:
 			FoundSubSystem = USeedExt_GameInstanceSubSystem::_GetSubsystem<TSubSystem>(pInWorldContextObject, SubsystemClass);
 		//else if constexpr (std::is_base_of_v<USeedExt_WorldSubsystem,TSubSystem> == true)
 		//	FoundSubSystem = USeedExt_WorldSubsystem::_GetSubsystem<TSubSystem>(pInWorldContextObject, SubsystemClass);
-		//else if constexpr (std::is_base_of_v<USeedExt_LocalPlayerSubsystem,TSubSystem> == true)
-		//	FoundSubSystem = USeedExt_LocalPlayerSubsystem::_GetSubsystem<TSubSystem>(pInWorldContextObject, SubsystemClass);
+		else if constexpr (std::is_base_of_v<USeedExt_LocalPlayerSubSystem,TSubSystem> == true)
+			FoundSubSystem = USeedExt_LocalPlayerSubSystem::_GetSubsystem<TSubSystem>(pInWorldContextObject, SubsystemClass);
 		//if(FoundSubSystem==nullptr || FoundSubSystem->IsInitiated()==false)
 		//	return nullptr;
 

@@ -8,13 +8,14 @@ void UProjectKR_InputSubSystem::Init()
 {
 	Super::Init();
 
-	
+	InitEnhancedInput();
 }
 void UProjectKR_InputSubSystem::Reset()
 {
+	ResetEnhancedInput();
+	
 	Super::Reset();
 }
-
 void UProjectKR_InputSubSystem::UpdatePlayerController()
 {
 	
@@ -22,45 +23,42 @@ void UProjectKR_InputSubSystem::UpdatePlayerController()
 
 TObjectPtr<APlayerController> UProjectKR_InputSubSystem::GetPlayerController()
 {
-	return PlayerController;
+	if(PlayerController.IsValid() == false)
+		return nullptr;
+	
+	return PlayerController.Get();
+}
+void UProjectKR_InputSubSystem::SetPlayerController(class APlayerController* InPlayerController)
+{
+	PlayerController = InPlayerController;
+}
+const FProjectKR_InputSource* UProjectKR_InputSubSystem::GetPlayingInputConfigSource() const
+{
+	return InputConfig->GetInputMappingSource(PlayingContextName);
 }
 
 void UProjectKR_InputSubSystem::InitEnhancedInput()
 {
-// #if defined(UE_EDITOR)
-// 	pInputMappingContext = UVicExt_BasementResource::_GetObject()->GetInputMappingContext(EVicExt_InputMappintContextType::Editor);
-// #elif UE_GAME && PLATFORM_WINDOWS
-// 	pInputMappingContext = UVicExt_BasementResource::_GetObject()->GetInputMappingContext(EVicExt_InputMappintContextType::PC);
-// #elif UE_GAME && (PLATFORM_ANDROID || PLATFORM_APPLE)
-// 	pInputMappingContext = UVicExt_BasementResource::_GetObject()->GetInputMappingContext(EVicExt_InputMappintContextType::Mobile);
-// #endif
-// 	VICEXT_CHECK(pInputMappingContext != nullptr);
-//
-// 	if (pPlayerController == nullptr)
-// 		return;
-//
-// 	if (UEnhancedInputLocalPlayerSubsystem* SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(pPlayerController->GetLocalPlayer()))
-// 	{
-// 		SubSystem->AddMappingContext(pInputMappingContext, 0);
-// 		pEnhancedPlayerInput = SubSystem->GetPlayerInput();
-//
-// 		pEnhancedInputUserSettings = SubSystem->GetUserSettings();
-// 		if (pEnhancedInputUserSettings == nullptr)
-// 			return;
-// 		pEnhancedInputUserSettings->RegisterInputMappingContext(pInputMappingContext);
-// 	}
-	if(UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+	if(InputConfig == nullptr)
 	{
-		EnhancedInputSubSystem->AddMappingContext(InputMappingContext, 0);
-		PlayerInput = EnhancedInputSubSystem->GetPlayerInput();
-		PlayerInputUserSettings = EnhancedInputSubSystem->GetUserSettings();
+		const FString InputConfigPath = TEXT("/Game/KR_Input/KR_InputConfig.KR_InputConfig_C");
+		if(UClass* GeneratedInputConfig = LoadClass<UProjectKR_InputConfig>(this, *InputConfigPath))
+			InputConfig = NewObject<UProjectKR_InputConfig>(this, GeneratedInputConfig, FName(TEXT("InputConfig")));
+		
+		if(PlayingContextName == NAME_None)
+			PlayingContextName = FName(TEXT("Default"));
 	}
 }
 void UProjectKR_InputSubSystem::ResetEnhancedInput()
 {
-	if(UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer())){
-		EnhancedInputSubSystem->RemoveMappingContext(InputMappingContext);
-		PlayerInput = nullptr;
-		PlayerInputUserSettings = nullptr;
-	}
+
+}
+
+UClass* UProjectKR_InputSubSystem::GetSubSystemClass()
+{
+	return UProjectKR_InputSubSystem::StaticClass();
+}
+FString UProjectKR_InputSubSystem::GetSubSystemName()
+{
+	return TEXT("InputSubSystem");
 }

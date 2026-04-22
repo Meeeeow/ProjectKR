@@ -31,3 +31,16 @@ FString USeedExt_GameInstanceSubSystem::GetSubSystemName()
 {
 	return GetName();
 }
+
+UWorld* USeedExt_LocalPlayerSubSystem::GetSubSystemWorld()
+{
+	return nullptr;
+}
+UClass* USeedExt_LocalPlayerSubSystem::GetSubSystemClass()
+{
+	return USeedExt_LocalPlayerSubSystem::StaticClass();
+}
+FString USeedExt_LocalPlayerSubSystem::GetSubSystemName()
+{
+	return GetName();
+}

@@ -99,3 +99,45 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+UCLASS(ClassGroup=(SeedExtenstion))
+class SEEDEXT_CORE_API USeedExt_LocalPlayerSubSystem : public ULocalPlayerSubsystem, public ISeedExt_SubSystemInterface
+{
+	friend class FSeedExt_SubSystemCollector;
+
+	GENERATED_BODY()
+
+	//--------------------------------------------------//
+public:
+	template<class TSubSystem>
+	FORCEINLINE static TSubSystem* _GetSubsystem(UObject* InWorldContextObject, UClass* InSubsystemClass=TSubSystem::StaticClass())
+	{
+		UWorld* CurrentWorld = (InWorldContextObject!=nullptr) ? GEngine->GetWorldFromContextObject(InWorldContextObject,EGetWorldErrorMode::LogAndReturnNull) : nullptr;
+		if(CurrentWorld==nullptr || CurrentWorld->GetFirstLocalPlayerFromController()==nullptr)
+			return nullptr;
+
+		return Cast<TSubSystem>(CurrentWorld->GetFirstLocalPlayerFromController()->GetSubsystemBase(InSubsystemClass));
+	}
+	template<class TSubSystem>
+	FORCEINLINE static bool _HasSubsystem(UObject* InWorldContextObject, UClass* InSubsystemClass=TSubSystem::StaticClass())
+	{
+		return (_GetSubsystem<TSubSystem>(InWorldContextObject, InSubsystemClass) != nullptr);
+	}
+
+protected:
+	virtual void Initialize(FSubsystemCollectionBase& Collection) override { Init(); }
+	virtual void Deinitialize() override { Reset(); }
+
+	virtual bool ShouldCreateSubsystem(UObject* Outer) const override
+	{
+		if(GetClass() == USeedExt_GameInstanceSubSystem::StaticClass())
+			return false;
+
+		return Super::ShouldCreateSubsystem(Outer);
+	}
+
+public:
+	virtual UWorld* GetSubSystemWorld() override;
+	virtual UClass* GetSubSystemClass() override;
+	virtual FString GetSubSystemName() override;
+	virtual ESeedExt_SubSystemType GetSubSystemType() const override { return ESeedExt_SubSystemType::LocalPlayer; }
+};

@@ -2,10 +2,16 @@
 
 #include "CoreMinimal.h"
 
-#include "ProjectKR_SunDefine.generated.h"
+#include "SeedExt_Core/Delegate/SeedExt_DelegateWrapper.h"
+
+#include "SeedExt_SunDefine.generated.h"
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FSeedExt_InfluenceChangedDelegate, const FSeedExt_InfluenceState&);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FSeedExt_SeasonChangedDelegate, ESeedExt_SeasonType, ESeedExt_SeasonType);
+DECLARE_MULTICAST_DELEGATE_OneParam(FSeedExt_SunriseDelegate, bool);
 
 UENUM(BlueprintType)
-enum class EProjectKR_SeasonType : uint8
+enum class ESeedExt_SeasonType : uint8
 {
 	None = 0,
 	Spring			/** 0.00 ~ 0.25 */,
@@ -16,23 +22,23 @@ enum class EProjectKR_SeasonType : uint8
 };
 
 UENUM(BlueprintType)
-enum class EProjectKR_LatitudeBandType : uint8
+enum class ESeedExt_LatitudeBandType : uint8
 {
 	None = 0,
 	Polar,
 	Subpolar,
 	Temperate,
-	SubTemperate,
+	SubTropical,
 	Tropical,
 	Num				UMETA(Hidden),
 };
 
-/** ProjectKR_Sun이 실시간으로 계산하는 태양의 물리적 상태.
+/** SeedExt_Sun이 실시간으로 계산하는 태양의 물리적 상태.
  * ElevationAngle은 수평선 기준의 각도 0 = 일출/일몰, 90 = 천정
  * Azimuth는 북쪽 기준의 시계방향 각도 0 = 북, 90 = 동, 180 = 남, 270 = 서
  */
 USTRUCT(BlueprintType)
-struct FProjectKR_SunState
+struct FSeedExt_SunState
 {
 	GENERATED_BODY()
 	
@@ -53,7 +59,7 @@ struct FProjectKR_SunState
 	float SeasonCycle = 0.25f;
 	/** 현재 계절 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Sun")
-	EProjectKR_SeasonType SeasonType = EProjectKR_SeasonType::None;
+	ESeedExt_SeasonType SeasonType = ESeedExt_SeasonType::None;
 	/** 태양 색온도 ( Kelvin ) */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Sun")
 	float ColorKelvinTemperature = 6000.f;
@@ -67,20 +73,20 @@ struct FProjectKR_SunState
 	{
 		return FMath::Max(0.0f, FMath::Sin(FMath::DegreesToRadians(ElevationAngle)));
 	}
-	EProjectKR_LatitudeBandType GetLatitudeBandType() const
+	ESeedExt_LatitudeBandType GetLatitudeBandType() const
 	{
-		if(ElevationAngle < 20.0f)	return EProjectKR_LatitudeBandType::Polar;
-		if(ElevationAngle < 40.0f)	return EProjectKR_LatitudeBandType::Subpolar;
-		if(ElevationAngle < 60.0f)	return EProjectKR_LatitudeBandType::Temperate;
-		if(ElevationAngle < 75.0f)	return EProjectKR_LatitudeBandType::SubTemperate;
+		if(ElevationAngle < 20.0f)	return ESeedExt_LatitudeBandType::Polar;
+		if(ElevationAngle < 40.0f)	return ESeedExt_LatitudeBandType::Subpolar;
+		if(ElevationAngle < 60.0f)	return ESeedExt_LatitudeBandType::Temperate;
+		if(ElevationAngle < 75.0f)	return ESeedExt_LatitudeBandType::SubTropical;
 		
-		return EProjectKR_LatitudeBandType::Tropical;
+		return ESeedExt_LatitudeBandType::Tropical;
 	}
 };
 
-/** FProjectKR_SunState에서 파생된 바이옴을 결정하기 위한 파라미터 */
+/** FSeedExt_SunState에서 파생된 바이옴을 결정하기 위한 파라미터 */
 USTRUCT(BlueprintType)
-struct FProjectKR_SunInfluenceBiomeState
+struct FSeedExt_InfluenceState
 {
 	GENERATED_BODY()
 
@@ -102,7 +108,7 @@ struct FProjectKR_SunInfluenceBiomeState
 
 	//--------------------------------------------------// Influence
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Influence")
-	EProjectKR_LatitudeBandType LatitudeBandType = EProjectKR_LatitudeBandType::None;
+	ESeedExt_LatitudeBandType LatitudeBandType = ESeedExt_LatitudeBandType::None;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Influence")
 	float SeasonalWarmth = 0.5f;
 	/** 대기 투명도 (안개/구름 효과, 0=불투명 ~ 1=맑음) */
@@ -122,7 +128,7 @@ struct FProjectKR_SunInfluenceBiomeState
 };
 
 USTRUCT(BlueprintType)
-struct FProjectKR_SunAtomsphereParams
+struct FSeedExt_SunAtomsphereParams
 {
 	GENERATED_BODY()
 
@@ -144,4 +150,22 @@ struct FProjectKR_SunAtomsphereParams
 	/** 하늘 조명 강도 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Atmosphere")
 	float SkyLightIntensity = 1.0f;
+};
+
+class FSeedExt_InfluenceChangedDelegator : public FSeedExt_DelegateWrapper<FSeedExt_InfluenceChangedDelegate>
+{
+public:
+	void Broadcast(const FSeedExt_InfluenceState& InInfluenceState)	const { OnDelegate.Broadcast(InInfluenceState); }
+};
+
+class FSeedExt_SeasonChangedDelegator : public FSeedExt_DelegateWrapper<FSeedExt_SeasonChangedDelegate>
+{
+public:
+	void Broadcast(ESeedExt_SeasonType InNewSeasonType, ESeedExt_SeasonType InOldSeasonType) const { OnDelegate.Broadcast(InNewSeasonType, InOldSeasonType); }
+};
+
+class FSeedExt_SunriseDelegator : public FSeedExt_DelegateWrapper<FSeedExt_SunriseDelegate>
+{
+public:
+	void Broadcast(bool InSunrise) const { OnDelegate.Broadcast(InSunrise); }
 };

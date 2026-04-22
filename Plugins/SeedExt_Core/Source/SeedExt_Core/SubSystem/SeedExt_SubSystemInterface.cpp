@@ -7,7 +7,8 @@ void ISeedExt_SubSystemInterface::Init()
 	if(Collector == nullptr)
 		return;
 
-	if(Collector->AddSubSystem(this) == true){
+	if(Collector->AddSubSystem(this) == true)
+	{
 		SubSystemLoadingState = ESeedExt_LoadingStateType::NotLoading;
 		SubSystemPlayingState = ESeedExt_PlayingStateType::NotReady;
 	}
@@ -18,7 +19,8 @@ void ISeedExt_SubSystemInterface::Reset()
 	if(Collector == nullptr)
 		return;
 
-	if(Collector->RemoveSubSystem(this) == true){
+	if(Collector->RemoveSubSystem(this) == true)
+	{
 		SubSystemLoadingState = ESeedExt_LoadingStateType::NotLoading;
 		SubSystemPlayingState = ESeedExt_PlayingStateType::NotReady;
 	}
