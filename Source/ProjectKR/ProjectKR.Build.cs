@@ -8,7 +8,7 @@ public class ProjectKR : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { 
+		PublicDependencyModuleNames.AddRange(new string[] {
 			"Core",
 			"CoreUObject",
 			"Engine",
@@ -39,6 +39,7 @@ public class ProjectKR : ModuleRules
 			"CommonInput",
 			"GameplayTags",
 			"EnhancedInput",
+			"Foliage",
 		});
 
 		// Uncomment if you are using Slate UI

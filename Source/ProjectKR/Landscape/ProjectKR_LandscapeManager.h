@@ -6,6 +6,8 @@
 
 #include "SeedExt_Core/SubSystem/SeedExt_SubSystemBase.h"
 
+#include "ProjectKR/Landscape/ProjectKR_LandscapeDefine.h"
+
 #include "ProjectKR_LandscapeManager.generated.h"
 
 UENUM(BlueprintType)

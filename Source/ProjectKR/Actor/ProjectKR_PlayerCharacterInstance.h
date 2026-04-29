@@ -8,7 +8,7 @@
 
 #include "ProjectKR_PlayerCharacterInstance.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class PROJECTKR_API AProjectKR_PlayerCharacterInstance : public ASeedExt_CharacterInstance
 {
 	GENERATED_BODY()

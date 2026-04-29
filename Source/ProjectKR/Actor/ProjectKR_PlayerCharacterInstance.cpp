@@ -11,7 +11,6 @@ AProjectKR_PlayerCharacterInstance::AProjectKR_PlayerCharacterInstance()
 void AProjectKR_PlayerCharacterInstance::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 void AProjectKR_PlayerCharacterInstance::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {

@@ -17,4 +17,9 @@ class PROJECTKR_API AProjectKR_GameMode : public AGameModeBase
 public:
 	virtual void BeginPlay() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+protected:
+	virtual void OnPostLogin(AController* NewPlayer) override;
 };

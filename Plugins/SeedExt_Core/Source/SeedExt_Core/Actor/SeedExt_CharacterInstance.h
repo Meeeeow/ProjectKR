@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "SeedExt_CharacterInstance.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable)
 class SEEDEXT_CORE_API ASeedExt_CharacterInstance : public ACharacter
 {
 	GENERATED_BODY()
@@ -25,4 +25,15 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="KR|Character")
+	TObjectPtr<class USkeletalMeshComponent> HeadSkeletalMeshComponent = nullptr;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="KR|Character")
+	TObjectPtr<class USkeletalMeshComponent> BodySkeletalMeshComponent = nullptr;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Character")
+	TObjectPtr<class USkeletalMesh> HeadSkeletalMesh = nullptr;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Character")
+	TObjectPtr<class USkeletalMesh> BodySkeletalMesh = nullptr;
 };

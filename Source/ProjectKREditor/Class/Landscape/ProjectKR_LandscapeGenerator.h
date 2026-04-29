@@ -9,45 +9,6 @@
 
 #include "ProjectKR_LandscapeGenerator.generated.h"
 
-
-USTRUCT(BlueprintType)
-struct PROJECTKREDITOR_API FProjectKR_BiomeEnvironment
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
-	FName BiomeName = NAME_None;
-
-	// 기후 타겟
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin=0,ClampMax=1))
-	float Temperature = 0.5f;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin=0,ClampMax=1))
-	float Humidity = 0.5f;
-
-	// 고도 제한
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
-	float MinHeight = 0.0f;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
-	float MaxHeight = 1.0f;
-
-	// 지형 특성
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
-	float HeightOffset = 0.0f;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
-	float HeightMultiplier = 1.0f;
-};
-
-USTRUCT(BlueprintType)
-struct PROJECTKREDITOR_API FProjectKR_BiomeInfo
-{
-	GENERATED_BODY()
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
-	FProjectKR_BiomeEnvironment BiomeInfo;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
-	TSoftObjectPtr<class ULandscapeLayerInfoObject> BiomeInfoObject; 
-};
-
 UCLASS(ClassGroup="KR", Blueprintable)
 class PROJECTKREDITOR_API AProjectKR_LandscapeGenerator : public AActor
 {
@@ -66,7 +27,8 @@ protected:
 	/** Main function to generate the landscape. Accessible via a button in the Details panel. */
 	UFUNCTION(CallInEditor,Category="Landscape Generate",DisplayName="Generate Landscape",meta=(DisplayPriority="0"))
 	void TryToGenerateLandscape();
-	void CalculateBiomeWeights(const float InX, const float InY, const float InNormalizedHeight, TMap<FName, float>& OutWeightsMap) const;
+	void CalculateBiomeWeights(const float InTemperature, const float InHumidity, const float InNormalizedHeight, TMap<FName, float>& OutWeightsMap) const;
+	bool LoadHeightDataFromBakedTexture(TArray<uint16>& OutHeightData_List, int32 InExpectedSizeX, int32 InExpectedSizeY) const;
 	/** Clears the currently managed landscape, if any. */
 	UFUNCTION(CallInEditor,Category="Landscape Generate",DisplayName="Clear Landscape",meta=(DisplayPriority="1"))
 	void ClearManagedLandscape();
@@ -79,7 +41,7 @@ protected:
 	void BakeEnvironmentMap();
 
 	UTexture2D* SaveArrayToTexture(const FString& InAssetName, int32 InSizeX, int32 InSizeY, const TArray<FColor>& InPixel_List);
-	bool LoadArrayFromTexture(UTexture2D* InTexture, TArray<FColor>& OutPixel_List);
+	bool LoadArrayFromTexture(UTexture2D* InTexture, TArray<FColor>& OutPixel_List) const;
 
 	/** Number of components in the X direction. */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings", meta=(ClampMin="1",UIMin="1"))
@@ -115,6 +77,8 @@ protected:
 	/** Seed for the random number generator to ensure reproducibility. */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings")
 	int32 Seed = 1;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings")
+	int32 FoliageSeed = 32;
 
 	/** Overall scale of the noise pattern. Larger values zoom out, creating larger features. */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category = "KR|Landscape Settings")
@@ -144,12 +108,9 @@ protected:
 	TObjectPtr<class URuntimeVirtualTexture> RVT_HeightMap = nullptr;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="KR|Landscape Settings")
 	TObjectPtr<class URuntimeVirtualTexture> RVT_BiomeMap = nullptr;
-	/** Default Landscape Layer Info Object to use when no biomes are defined. */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "KR|Landscape Settings")
-	TMap<EProjectKR_LandscapeBiomeType, TObjectPtr<class ULandscapeLayerInfoObject>> LandscapeBiomeInfoObject_List;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "KR|Landscape Settings")
-	TObjectPtr<class ULandscapeLayerInfoObject> DefaultLayerInfoObject = nullptr;
-
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings")
+	TObjectPtr<class ASeedExt_Sun> SunActor = nullptr;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Texture")
 	TObjectPtr<class UTexture2D> BakedHeightMap = nullptr;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Texture")
@@ -157,9 +118,6 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category = "KR|Landscape Settings")
 	TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo> LandscapeBiomeInfo_List;
-	UPROPERTY(EditAnywhere, Category = "KR|Landscape Settings")
-	TMap<EProjectKR_LandscapeBiomeType, TSoftObjectPtr<UMaterialInterface>> LandscapeBiomeMaterial_List;
-	
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Landscape Settings")
 	FName LandscapeName = FName(TEXT("KR_GenerateLandscape"));
@@ -176,4 +134,11 @@ private:
 	TWeakObjectPtr<class ARuntimeVirtualTextureVolume> ManagedHeightVolume = nullptr;
 	UPROPERTY(Transient)
 	TWeakObjectPtr<class ARuntimeVirtualTextureVolume> ManagedBiomeVolume = nullptr;
+
+	FVector2D PixelToWorld(const int32 InPixelX, const int32 InPixelY) const;
+
+	void BroadcastNotification(const FString& InNotificationString) const;
+	
+public:
+	static EProjectKR_LandscapeBiomeType FindDominantBiome(const TMap<EProjectKR_LandscapeBiomeType, float>& InWeightMap);
 };

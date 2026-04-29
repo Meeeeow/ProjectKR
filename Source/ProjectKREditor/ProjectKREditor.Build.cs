@@ -48,6 +48,7 @@ public class ProjectKREditor : ModuleRules
 			"CommonInput",
 			"GameplayTags",
 			"EnhancedInput",
+			"Foliage",
 		});
 	}
 }

@@ -74,6 +74,7 @@ Plugins/**/Intermediate/*
 DerivedDataCache/*
 
 # custom
+.Cowork/
 .gemini/
 .idea/
 RunGemini.bat

@@ -55,9 +55,10 @@ FORCEINLINE static void _ResetHandleCount() { _HandleCount = 0; }
 #define SEEDEXT_DECLARE_HANDLE_CPP_HANDLE_COUNT(HandleClassPrefix,HandleClassName)																										\
 uint64 SEEDEXT_MACROSTRING(HandleClassPrefix,HandleClassName)::_HandleCount = 0;
 
-#define SEEDEXT_REGIST_HANDLE_H_BODY(HandleClassPrefix,HandleClassName,InstanceClassPrefix,InstanceClassName)																			\
+#define SEEDEXT_REGIST_HANDLE_H_BODY(HandleClassPrefix,HandleClassName,InstanceClassPrefix,InstanceClassName,ManagerClassPrefix,ManagerClassName)										\
 private:																																												\
 	SEEDEXT_DECLARE_HANDLE_H_HANDLE_COUNT(HandleClassPrefix,HandleClassName)																											\
+	friend class SEEDEXT_MACROSTRING(ManagerClassPrefix,ManagerClassName);																												\
 	friend class SEEDEXT_MACROSTRING(InstanceClassPrefix,InstanceClassName);																											\
 																																														\
 	static SEEDEXT_MACROSTRING(HandleClassPrefix,HandleClassName) _CreateHandle(SEEDEXT_MACROSTRING(InstanceClassPrefix,InstanceClassName)* InInstance, uint64 InHandleCount = 0)		\
@@ -115,10 +116,10 @@ inline uint32 GetTypeHash(const SEEDEXT_MACROSTRING(HandleClassPrefix,HandleClas
 };																																														\
 typedef TDefaultMapHashableKeyFuncs<SEEDEXT_MACROSTRING(HandleClassPrefix,HandleClassName),SEEDEXT_MACROSTRING(InstanceClassPrefix,InstanceClassName)*,false> SEEDEXT_MACROSTRING_TRIPLE(HandleClassPrefix,HandleClassName,MapKeyFuncs);
 
-#define SEEDEXT_REGIST_HANDLE_H(ApiName,HandleClassPrefix,HandleClassName,InstanceClassPrefix,InstanceClassName)																		\
+#define SEEDEXT_REGIST_HANDLE_H(ApiName,HandleClassPrefix,HandleClassName,InstanceClassPrefix,InstanceClassName,ManagerClassPrefix,ManagerClassName)									\
 struct ApiName SEEDEXT_MACROSTRING(HandleClassPrefix,HandleClassName) : public FSeedExt_Handle																							\
 {																																														\
-	SEEDEXT_REGIST_HANDLE_H_BODY(HandleClassPrefix,HandleClassName,InstanceClassPrefix,InstanceClassName)																				\
+	SEEDEXT_REGIST_HANDLE_H_BODY(HandleClassPrefix,HandleClassName,InstanceClassPrefix,InstanceClassName,ManagerClassPrefix,ManagerClassName)											\
 };																																														\
 SEEDEXT_REGIST_HANDLE_H_END(HandleClassPrefix,HandleClassName,InstanceClassPrefix,InstanceClassName)
 

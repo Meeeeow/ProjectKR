@@ -19,13 +19,25 @@ UENUM(BlueprintType)
 enum class ESeedExt_SubSystemTickType : uint8
 {
 	None = 0,
-	System = 1		UMETA(DisplayName="System"),
-	World = 1 << 1	UMETA(DisplayName="World"),
-	Scaled = 1 << 2	UMETA(DisplayName="Scaled"),
-	
+	//--------------------------------------------------//
+	System = 1			UMETA(DisplayName="System"),
+	World = 1 << 1		UMETA(DisplayName="World"),
+	Scaled = 1 << 2		UMETA(DisplayName="Scaled"),
+	//--------------------------------------------------//
 	SystemAndWorld = System | World,
 	ScaledWorld = World | Scaled,
-	
+	Num,
+};
+
+enum class ESeedExt_SubSystemOrderType : uint8
+{
+	Previous = 10		UMETA(DisplayName = "Previous"),
+	//--------------------------------------------------//
+	Before = 50			UMETA(DisplayName = "Before"),
+	Normal = 100		UMETA(DisplayName = "Normal"),
+	Next = 200			UMETA(DisplayName = "Next"),
+	//--------------------------------------------------//
+	Post = 250			UMETA(DisplayName = "Post"),
 	Num,
 };
 

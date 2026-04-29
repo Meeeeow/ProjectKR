@@ -7,8 +7,9 @@ public class ProjectKREditorTarget : TargetRules
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V4;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Latest;
+		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_3;
 		ExtraModuleNames.Add("ProjectKR");
+		ExtraModuleNames.Add("ProjectKRClient");
 		ExtraModuleNames.Add("ProjectKREditor");
 		bUseUnityBuild = true;
 		bUseAdaptiveUnityBuild = false;
