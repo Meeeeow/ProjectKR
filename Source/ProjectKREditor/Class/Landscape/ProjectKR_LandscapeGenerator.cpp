@@ -1,38 +1,24 @@
 #include "ProjectKR_LandscapeGenerator.h"
 
-#include <map>
-
-#include "ClearReplacementShaders.h"
 #include "Landscape.h"
-#include "LandscapeImportHelper.h"
 #include "LandscapeLayerInfoObject.h"
 #include "Editor.h"
-#include "EditorModeManager.h"
-#include "EditorModes.h"
 #include "EngineUtils.h"
 #include "FileHelpers.h"
 #include "InstancedFoliageActor.h"
 #include "LandscapeSubsystem.h"
-
 #include "AssetRegistry/AssetRegistryModule.h"
-
 #include "Components/RuntimeVirtualTextureComponent.h"
-
 #include "Framework/Notifications/NotificationManager.h"
-
 #include "Kismet/GameplayStatics.h"
-
-#include "ProjectKR/Landscape/ProjectKR_LandscapeFunctionLibrary.h"
-
 #include "UObject/UObjectIterator.h"
 #include "WorldPartition/WorldPartition.h"
+#include "VT/RuntimeVirtualTextureVolume.h"
+#include "Widgets/Notifications/SNotificationList.h"
 
-#include "SeedExt_Core/SubSystem/SeedExt_SubSystemDefine.h"
 #include "SeedExt_Core/World/SeedExt_Sun.h"
 
-#include "VT/RuntimeVirtualTextureVolume.h"
-
-#include "Widgets/Notifications/SNotificationList.h"
+#include "ProjectKR/Landscape/ProjectKR_LandscapeFunctionLibrary.h"
 
 AProjectKR_LandscapeGenerator::AProjectKR_LandscapeGenerator()
 {

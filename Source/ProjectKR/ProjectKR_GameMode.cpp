@@ -16,7 +16,14 @@ void AProjectKR_GameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void AProjectKR_GameMode::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
+
 }
+
+void AProjectKR_GameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+}
+
 void AProjectKR_GameMode::OnPostLogin(AController* NewPlayer)
 {
 	Super::OnPostLogin(NewPlayer);

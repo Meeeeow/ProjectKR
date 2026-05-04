@@ -18,16 +18,26 @@ ASeedExt_Sun::ASeedExt_Sun()
 	SetRootComponent(Root);
  
 	// DirectionalLight
-	DirectionalLightComponent = CreateDefaultSubobject<UDirectionalLightComponent>(TEXT("DirectionalLight"));
-	DirectionalLightComponent->SetupAttachment(Root);
-	DirectionalLightComponent->Intensity = MaxSunlightLux;
-	DirectionalLightComponent->LightColor = FColor::White;
-	DirectionalLightComponent->bAtmosphereSunLight = true;
-	DirectionalLightComponent->AtmosphereSunLightIndex = 0;
-	DirectionalLightComponent->CastShadows = true;
-	DirectionalLightComponent->DynamicShadowDistanceMovableLight = 50000.0f;
-	DirectionalLightComponent->CascadeDistributionExponent = 4.0f;
-	DirectionalLightComponent->DynamicShadowCascades = 4;
+	SunDirectionalLightComponent = CreateDefaultSubobject<UDirectionalLightComponent>(TEXT("SunDirectionalLight"));
+	SunDirectionalLightComponent->SetupAttachment(Root);
+	SunDirectionalLightComponent->Intensity = MaxSunlightLux;
+	SunDirectionalLightComponent->LightColor = FColor::White;
+	SunDirectionalLightComponent->bAtmosphereSunLight = true;
+	SunDirectionalLightComponent->AtmosphereSunLightIndex = 0;
+	SunDirectionalLightComponent->CastShadows = true;
+	SunDirectionalLightComponent->DynamicShadowDistanceMovableLight = 50000.0f;
+	SunDirectionalLightComponent->CascadeDistributionExponent = 4.0f;
+	SunDirectionalLightComponent->DynamicShadowCascades = 4;
+	SunDirectionalLightComponent->SetForwardShadingPriority(1);
+
+	MoonDirectionalLightComponent = CreateDefaultSubobject<UDirectionalLightComponent>(TEXT("MoonDirectionalLight"));
+	MoonDirectionalLightComponent->SetupAttachment(Root);
+	MoonDirectionalLightComponent->Intensity = 0.0f;
+	MoonDirectionalLightComponent->LightColor = FColor(179, 204, 255);
+	MoonDirectionalLightComponent->bAtmosphereSunLight = false;
+	MoonDirectionalLightComponent->CastShadows = false;
+	MoonDirectionalLightComponent->DynamicShadowDistanceMovableLight = 0.f;
+	MoonDirectionalLightComponent->SetForwardShadingPriority(0);
 	
 	// SkyLight
 	SkyLightComponent = CreateDefaultSubobject<USkyLightComponent>(TEXT("SkyLight"));
@@ -49,12 +59,19 @@ ASeedExt_Sun::ASeedExt_Sun()
 	ExponentialHeightFogComponent->FogHeightFalloff = 0.2f;
 	ExponentialHeightFogComponent->FogMaxOpacity = 0.9f;
  
-	// 태양 메시 (빌보드)
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SunMesh"));
-	StaticMeshComponent->SetupAttachment(Root);
-	StaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	StaticMeshComponent->SetCastShadow(false);
-	StaticMeshComponent->SetAbsolute(true, true, false);
+	// Static Mesh
+	SunStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SunStaticMesh"));
+	SunStaticMeshComponent->SetupAttachment(Root);
+	SunStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SunStaticMeshComponent->SetCastShadow(false);
+	SunStaticMeshComponent->SetAbsolute(true, true, false);
+
+	MoonStaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MoonStaticMesh"));
+	MoonStaticMeshComponent->SetupAttachment(Root);
+	MoonStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	MoonStaticMeshComponent->SetCastShadow(false);
+	MoonStaticMeshComponent->SetAbsolute(true, true, false);
+	MoonStaticMeshComponent->SetVisibility(false);
 
 	// PostProcess
 	PostProcessComponent = CreateDefaultSubobject<UPostProcessComponent>(TEXT("PostProcess"));
@@ -68,8 +85,14 @@ void ASeedExt_Sun::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if(SunDirectionalLightComponent != nullptr)
+		SunDirectionalLightComponent->SetForwardShadingPriority(1);
+	if(MoonDirectionalLightComponent != nullptr)
+		MoonDirectionalLightComponent->SetForwardShadingPriority(0);
+
 	ApplyPostProcessSettings();
 	ComputeSunState();
+	ComputeMoonState();
 	ComputeBiomeInfluence();
 	ApplyAtmosphereParams(ComputeAtmosphereParams());
 }
@@ -80,6 +103,7 @@ void ASeedExt_Sun::OnConstruction(const FTransform& Transform)
 
 	ApplyPostProcessSettings();
 	ComputeSunState();
+	ComputeMoonState();
 	ComputeBiomeInfluence();
 	ApplyAtmosphereParams(ComputeAtmosphereParams());
 }
@@ -90,10 +114,12 @@ void ASeedExt_Sun::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	DayTime = FMath::Fmod(DayTime + DeltaTime * DayTimeScale / 86400.f, 1.f);
+	LunarCycle = FMath::Fmod(LunarCycle + DeltaTime * DayTimeScale / (86400.f * 29.35f), 1.f);
 	SeasonCycle = FMath::Fmod(SeasonCycle + DeltaTime * SeasonCycleScale / (86400.f * 365.25f), 1.f);
 
 	const bool bWasDayTime = CurrentSunState.IsDayTime();
 	ComputeSunState();
+	ComputeMoonState();
 	ApplyAtmosphereParams(ComputeAtmosphereParams());
 	ApplyPostProcessSettings();
 
@@ -116,6 +142,18 @@ void ASeedExt_Sun::Tick(float DeltaTime)
 			PreviousSeasonType = CurrentSunState.SeasonType;
 		}
 	}
+
+	const bool bIsCaptured = (LastSkyCaptureElevationAngle != -FLT_MAX);
+	const bool bIsCaptureSky = bIsCaptured==false || CurrentSunState.ElevationAngle>-12.f;
+	if(bIsCaptureSky == false)
+		return;
+	
+	if(const float ElevationDelta = FMath::Abs(CurrentSunState.ElevationAngle - LastSkyCaptureElevationAngle); ElevationDelta >= SkyRecaptureThresholdDegree)
+	{
+		SkyLightComponent->RecaptureSky();
+		LastSkyCaptureElevationAngle = CurrentSunState.ElevationAngle;
+	}
+	
 }
 
 #if WITH_EDITOR
@@ -123,15 +161,18 @@ void ASeedExt_Sun::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 {
 	Super::PostEditChangeProperty(InEvent);
 	ComputeSunState();
+	ComputeMoonState();
 	ComputeBiomeInfluence();
 	ApplyAtmosphereParams(ComputeAtmosphereParams());
 
 	TArray<UObject*> ExportObject_List;
-	ExportObject_List.Add(DirectionalLightComponent);
+	ExportObject_List.Add(SunDirectionalLightComponent);
+	ExportObject_List.Add(MoonDirectionalLightComponent);
 	ExportObject_List.Add(SkyLightComponent);
 	ExportObject_List.Add(SkyAtmosphereComponent);
 	ExportObject_List.Add(ExponentialHeightFogComponent);
-	ExportObject_List.Add(StaticMeshComponent);
+	ExportObject_List.Add(SunStaticMeshComponent);
+	ExportObject_List.Add(MoonStaticMeshComponent);
 	ExportObject_List.Add(PostProcessComponent);
 	ExportPropertyAdditiveObject(ExportObject_List);
 }
@@ -141,6 +182,7 @@ void ASeedExt_Sun::SetDayTime(float InNewDayTime)
 {
 	DayTime = FMath::Clamp(InNewDayTime, 0.f, 1.f);
 	ComputeSunState();
+	ComputeMoonState();
 	ComputeBiomeInfluence();
 	ApplyAtmosphereParams(ComputeAtmosphereParams());
 	OnInfluenceChangedDelegator.Broadcast(CurrentBiomeInfluence);
@@ -157,6 +199,7 @@ void ASeedExt_Sun::SetSeasonType(ESeedExt_SeasonType InNewSeasonType)
 	}
 
 	ComputeSunState();
+	ComputeMoonState();
 	ComputeBiomeInfluence();
 	ApplyAtmosphereParams(ComputeAtmosphereParams());
 	OnInfluenceChangedDelegator.Broadcast(CurrentBiomeInfluence);
@@ -280,21 +323,13 @@ void ASeedExt_Sun::ComputeSunState()
 	 */
 	float ColorTemperatureK = 0.0f;
 	if(ElevationDegree <= 0.0f)
-	{
 		ColorTemperatureK = 2000.0f;
-	}
 	else if(ElevationDegree < 10.0f)
-	{
 		ColorTemperatureK = FMath::Lerp(2200.0f, 4000.0f, ElevationDegree / 10.0f);
-	}
 	else if(ElevationDegree < 30.0f)
-	{
 		ColorTemperatureK = FMath::Lerp(4000.0f, 5500.0f, (ElevationDegree - 10.0f) / 20.0f);
-	}
 	else
-	{
 		ColorTemperatureK = FMath::Lerp(5500.0f, 6200.0f, FMath::Min((ElevationDegree - 30.0f) / 60.0f, 1.0f));
-	}
 	
 	// 현재 계절 선택
 	ESeedExt_SeasonType Season;
@@ -316,18 +351,16 @@ void ASeedExt_Sun::ComputeSunState()
 	// 각도 설정
 	const float Pitch = -ElevationDegree; 
 	const float Yaw = AzimuthDegree - 180.0f;
-	DirectionalLightComponent->SetWorldRotation(FRotator(Pitch, Yaw, 0.0f));
+	SunDirectionalLightComponent->SetWorldRotation(FRotator(Pitch, Yaw, 0.0f));
 
 	// 위치 설정
-	if(StaticMeshComponent!=nullptr && StaticMeshComponent->GetStaticMesh()!=nullptr)
+	if(SunStaticMeshComponent!=nullptr && SunStaticMeshComponent->GetStaticMesh()!=nullptr)
 	{
 		const bool bIsVisible = CurrentSunState.ElevationAngle > -2.0f;
-		StaticMeshComponent->SetVisibility(bIsVisible);
+		SunStaticMeshComponent->SetVisibility(bIsVisible);
 
 		if(bIsVisible == false)
-		{
 			return;
-		}
 		
 		FVector CameraPosition = GetActorLocation();
 		if(const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
@@ -338,151 +371,212 @@ void ASeedExt_Sun::ComputeSunState()
 			CameraPosition = CameraLocation;
 		}
 		
-		const FVector SunDirection = -DirectionalLightComponent->GetForwardVector();
+		const FVector SunDirection = -SunDirectionalLightComponent->GetForwardVector();
 		const FVector SunWorldPosition = CameraPosition + SunDirection * AstronomicalUnit;
-		StaticMeshComponent->SetWorldLocation(SunWorldPosition);
+		SunStaticMeshComponent->SetWorldLocation(SunWorldPosition);
 
 		float ScaleMultiplier = FMath::Lerp(1.5f, 1.0f, FMath::Clamp(CurrentSunState.ElevationAngle / 90.0f, 0.0f, 1.0f));
-		StaticMeshComponent->SetWorldScale3D(FVector(ScaleMultiplier));
+		SunStaticMeshComponent->SetWorldScale3D(FVector(ScaleMultiplier));
 	}
 	
 }
+void ASeedExt_Sun::ComputeMoonState()
+{
+	const float MoonPhase = FMath::Abs(FMath::Sin(LunarCycle * PI));
+	const float MoonDayTime = FMath::Fmod(DayTime + MoonPhase * 0.5f, 1.f);
+
+	const float LatitudeRadian = FMath::DegreesToRadians(LatitudeDegree);
+	const float DeclinationDegree = -23.45f * FMath::Cos(2.0f * PI * (SeasonCycle + 0.0833f));
+	const float DeclinationRadian = FMath::DegreesToRadians(DeclinationDegree);
+	const float HourAngleRadian = FMath::DegreesToRadians((MoonDayTime - 0.5f) * 360.f);
+
+	const float ElevationSinValue = FMath::Sin(LatitudeRadian) * FMath::Sin(DeclinationRadian) + FMath::Cos(LatitudeRadian) * FMath::Cos(DeclinationRadian) * FMath::Cos(HourAngleRadian);
+	const float ElevationRadian = FMath::Asin(FMath::Clamp(ElevationSinValue, -1.f, 1.f));
+	const float ElevationDegree = FMath::RadiansToDegrees(ElevationRadian);
+
+	float AzimuthDegree = 180.f;
+	const float ElevationCosValue = FMath::Cos(ElevationRadian);
+	if(ElevationCosValue > KINDA_SMALL_NUMBER)
+	{
+		const float AzimuthCosValue = (FMath::Sin(DeclinationRadian) - FMath::Sin(LatitudeRadian) * ElevationSinValue) / (ElevationCosValue * FMath::Cos(LatitudeRadian));
+		AzimuthDegree = FMath::RadiansToDegrees(FMath::Acos(FMath::Clamp(AzimuthCosValue, -1.f, 1.f)));
+		if(MoonDayTime > 0.5f)
+			AzimuthDegree = 360.f - AzimuthDegree;
+	}
+
+	const float MoonHorizonBlend = FMath::Clamp(ElevationDegree/3.f, 0.1f, 1.f);
+	const float LightIntensity = MoonPhase * MoonlightIntensity * 75000.f * MoonHorizonBlend;
+
+	CurrentMoonState.ElevationAngle = ElevationDegree;
+	CurrentMoonState.Azimuth = AzimuthDegree;
+	CurrentMoonState.MoonPhase = MoonPhase;
+	CurrentMoonState.LightIntensity = LightIntensity;
+
+	const float Pitch = -ElevationDegree; 
+	const float Yaw = AzimuthDegree - 180.0f;
+	MoonDirectionalLightComponent->SetWorldRotation(FRotator(Pitch, Yaw, 0.f));
+
+	if(MoonStaticMeshComponent!=nullptr && MoonStaticMeshComponent->GetStaticMesh()!=nullptr)
+	{
+		const bool bIsVisible = LightIntensity > KINDA_SMALL_NUMBER;
+		MoonStaticMeshComponent->SetVisibility(bIsVisible);
+
+		if(bIsVisible == false)
+			return;
+
+		FVector CameraPosition = GetActorLocation();
+		if(const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+		{
+			FVector CameraLocation = FVector::ZeroVector;
+			FRotator CameraRotation = FRotator::ZeroRotator;
+			PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
+			CameraPosition = CameraLocation;
+		}
+		
+		const FVector MoonDirection = -MoonDirectionalLightComponent->GetForwardVector();
+		const FVector MoonWorldPosition = CameraPosition + MoonDirection * AstronomicalUnit;
+		MoonStaticMeshComponent->SetWorldLocation(MoonWorldPosition);
+
+		float ScaleMultiplier = FMath::Lerp(1.5f, 1.0f, FMath::Clamp(CurrentMoonState.ElevationAngle / 90.0f, 0.0f, 1.0f));
+		MoonStaticMeshComponent->SetWorldScale3D(FVector(ScaleMultiplier));
+	}
+}
 void ASeedExt_Sun::ComputeBiomeInfluence()
 {
-	FSeedExt_InfluenceState& BiomeInfluence = CurrentBiomeInfluence;
-	const FSeedExt_SunState& SunState = CurrentSunState;
-
 	const float MaxNoonElev = FMath::Clamp(90.f - FMath::Abs(LatitudeDegree) + 23.45f, 0.f, 90.f);
-	BiomeInfluence.TemperatureOffset = FMath::Lerp(-0.45f, 0.45f, MaxNoonElev / 90.f);
-	BiomeInfluence.LatitudeBandType = SunState.GetLatitudeBandType();
+	CurrentBiomeInfluence.TemperatureOffset = FMath::Lerp(-0.45f, 0.45f, MaxNoonElev / 90.f);
+	CurrentBiomeInfluence.LatitudeBandType = CurrentSunState.GetLatitudeBandType();
 
-	BiomeInfluence.SeasonalWarmth = FMath::Clamp(0.5f -0.5f * FMath::Cos(2.f * PI * (SunState.SeasonCycle - 0.25f)), 0.f, 1.f);
+	CurrentBiomeInfluence.SeasonalWarmth = FMath::Clamp(0.5f -0.5f * FMath::Cos(2.f * PI * (CurrentSunState.SeasonCycle - 0.25f)), 0.f, 1.f);
 
-	BiomeInfluence.TemperatureMultiplier = FMath::Lerp(0.5f, 1.5f, SunState.DayLightFraction);
+	CurrentBiomeInfluence.TemperatureMultiplier = FMath::Lerp(0.5f, 1.5f, CurrentSunState.DayLightFraction);
 
-	switch(SunState.SeasonType)
+	switch(CurrentSunState.SeasonType)
 	{
 		case ESeedExt_SeasonType::Summer:
 		{
-			BiomeInfluence.TemperatureMultiplier *= 1.2f;
-			BiomeInfluence.TemperatureOffset += 0.1f;
+			CurrentBiomeInfluence.TemperatureMultiplier *= 1.2f;
+			CurrentBiomeInfluence.TemperatureOffset += 0.1f;
 			break;
 		}
 		case ESeedExt_SeasonType::Winter:
 		{
-			BiomeInfluence.TemperatureMultiplier *= 0.7f;
-			BiomeInfluence.TemperatureOffset -= 0.15f;
+			CurrentBiomeInfluence.TemperatureMultiplier *= 0.7f;
+			CurrentBiomeInfluence.TemperatureOffset -= 0.15f;
 			break;
 		}
 		default:
 		{
-			BiomeInfluence.TemperatureMultiplier *= 0.9f;
+			CurrentBiomeInfluence.TemperatureMultiplier *= 0.9f;
 			break;
 		}
 	}
 
-	BiomeInfluence.TemperatureMultiplier = FMath::Clamp(BiomeInfluence.TemperatureMultiplier, 0.1f, 2.f);
-	BiomeInfluence.TemperatureOffset = FMath::Clamp(BiomeInfluence.TemperatureOffset, -0.5f, 0.5f);
+	CurrentBiomeInfluence.TemperatureMultiplier = FMath::Clamp(CurrentBiomeInfluence.TemperatureMultiplier, 0.1f, 2.f);
+	CurrentBiomeInfluence.TemperatureOffset = FMath::Clamp(CurrentBiomeInfluence.TemperatureOffset, -0.5f, 0.5f);
 
-	switch(BiomeInfluence.LatitudeBandType)
+	switch(CurrentBiomeInfluence.LatitudeBandType)
 	{
 		case ESeedExt_LatitudeBandType::Polar:
 		{
-			BiomeInfluence.HumidityOffset = -0.25f;
-			BiomeInfluence.HumidityMultiplier = 0.5f;
+			CurrentBiomeInfluence.HumidityOffset = -0.25f;
+			CurrentBiomeInfluence.HumidityMultiplier = 0.5f;
 			break;
 		}
 		case ESeedExt_LatitudeBandType::Subpolar:
 		{
-			BiomeInfluence.HumidityOffset = 0.05f;
-			BiomeInfluence.HumidityMultiplier = 0.9f;
+			CurrentBiomeInfluence.HumidityOffset = 0.05f;
+			CurrentBiomeInfluence.HumidityMultiplier = 0.9f;
 			break;
 		}
 		case ESeedExt_LatitudeBandType::Temperate:
 		{
-			BiomeInfluence.HumidityOffset = 0.0f;
-			BiomeInfluence.HumidityMultiplier = 1.0f;
+			CurrentBiomeInfluence.HumidityOffset = 0.0f;
+			CurrentBiomeInfluence.HumidityMultiplier = 1.0f;
 			break;
 		}
 		case ESeedExt_LatitudeBandType::SubTropical:
 		{
-			BiomeInfluence.HumidityOffset = -0.15f;
-			BiomeInfluence.HumidityMultiplier = 0.7f;
+			CurrentBiomeInfluence.HumidityOffset = -0.15f;
+			CurrentBiomeInfluence.HumidityMultiplier = 0.7f;
 			break;
 		}
 		case ESeedExt_LatitudeBandType::Tropical:
 		{
-			BiomeInfluence.HumidityOffset = 0.2f;
-			BiomeInfluence.HumidityMultiplier = 1.3f;
+			CurrentBiomeInfluence.HumidityOffset = 0.2f;
+			CurrentBiomeInfluence.HumidityMultiplier = 1.3f;
 			break;
 		}
 	}
 
-	switch(SunState.SeasonType)
+	switch(CurrentSunState.SeasonType)
 	{
 		case ESeedExt_SeasonType::Spring:
 		{
-			BiomeInfluence.SeasonalPrecipitation = 1.3f;
+			CurrentBiomeInfluence.SeasonalPrecipitation = 1.3f;
 			break;
 		}
 		case ESeedExt_SeasonType::Summer:
 		{
-			BiomeInfluence.SeasonalPrecipitation = (BiomeInfluence.LatitudeBandType == ESeedExt_LatitudeBandType::Tropical) ? 1.5f : 0.8f;
+			CurrentBiomeInfluence.SeasonalPrecipitation = (CurrentBiomeInfluence.LatitudeBandType == ESeedExt_LatitudeBandType::Tropical) ? 1.5f : 0.8f;
 			break;
 		}
 		case ESeedExt_SeasonType::Autumn:
 		{
-			BiomeInfluence.SeasonalPrecipitation = 1.2f;
+			CurrentBiomeInfluence.SeasonalPrecipitation = 1.2f;
 			break;
 		}
 		case ESeedExt_SeasonType::Winter:
 		{
-			BiomeInfluence.SeasonalPrecipitation = 0.6f;
+			CurrentBiomeInfluence.SeasonalPrecipitation = 0.6f;
 			break;
 		}
 	}
 
-	BiomeInfluence.AtmosphericClarity = FMath::Lerp(0.4f, 1.f, FMath::Clamp(SunState.ElevationAngle / 90.f, 0.f, 1.f));
-	BiomeInfluence.DiurnalAplitude = (BiomeInfluence.LatitudeBandType == ESeedExt_LatitudeBandType::SubTropical || BiomeInfluence.LatitudeBandType == ESeedExt_LatitudeBandType::Polar) ? 0.25f : 0.1f;
+	CurrentBiomeInfluence.AtmosphericClarity = FMath::Lerp(0.4f, 1.f, FMath::Clamp(CurrentSunState.ElevationAngle / 90.f, 0.f, 1.f));
+	CurrentBiomeInfluence.DiurnalAplitude = (CurrentBiomeInfluence.LatitudeBandType == ESeedExt_LatitudeBandType::SubTropical || CurrentBiomeInfluence.LatitudeBandType == ESeedExt_LatitudeBandType::Polar) ? 0.25f : 0.1f;
 }
 FSeedExt_SunAtomsphereParams ASeedExt_Sun::ComputeAtmosphereParams() const
 {
-	const FSeedExt_SunState& SunState = CurrentSunState;
 	FSeedExt_SunAtomsphereParams SunParams;
 
-	const bool bIsNight = (SunState.ElevationAngle <= 0.0f);
+	SunParams.SunLightIntensity = CurrentSunState.NormalizedIntensity * MaxSunlightLux;
+	if(CurrentSunState.ElevationAngle < 15.f)
+		SunParams.SunLightColor = FMath::Lerp(SunriseColor, NoonColor, FMath::Max(CurrentSunState.ElevationAngle, 0.f) / 15.f);
+	else
+		SunParams.SunLightColor = FMath::Lerp(NoonColor * 0.9f, NoonColor, FMath::Clamp((CurrentSunState.ElevationAngle - 15.f) / 75.f, 0.f, 1.f));
 
-	const float MoonPhase = FMath::Abs(FMath::Sin(DayTime * PI));
-	const float MoonlightFactor = MoonPhase * MoonlightIntensity;
+	SunParams.MoonLightColor = MoonColor;
+	SunParams.MoonLightIntensity = CurrentMoonState.LightIntensity;
 
-	if(bIsNight == true)
+	const float DaySkyLight = FMath::Clamp(CurrentSunState.NormalizedIntensity * 2.f, 0.f, 2.f);
+	constexpr float StarAmbient = 0.05f;
+	const float NightSkyLight = StarAmbient + FMath::Lerp(0.f, 0.2f, CurrentMoonState.MoonPhase);
+
+	const float SkyLightTwilightBlend = FMath::Clamp((CurrentSunState.ElevationAngle + 15.f) / 20.f, 0.f, 1.f);
+	//SunParams.SkyLightIntensity = ( bIsNight==true ) ? NightSkyLight : FMath::Max(DaySkyLight, 0.1f);
+	SunParams.SkyLightIntensity = FMath::Lerp(NightSkyLight, FMath::Max(DaySkyLight, 0.1f), SkyLightTwilightBlend);
+
+	if(CurrentSunState.ElevationAngle < -3.f)
 	{
-		SunParams.SunLightColor = FLinearColor(0.05f, 0.07f, 0.15f);
-		SunParams.SunLightIntensity = MoonlightFactor * 75000.f;
+		SunParams.SkyColor = DeepNightSkyColor;
+	}
+	else if(CurrentSunState.ElevationAngle < 0.0f)
+	{
+		const float TwilightBlendFactor = (CurrentSunState.ElevationAngle + 3.f) / 3.f;
+		SunParams.SkyColor = FMath::Lerp(DeepNightSkyColor, TwilightSkyColor, TwilightBlendFactor);
+	}
+	else if(CurrentSunState.ElevationAngle < 10.f)
+	{
+		const float SunriseBlendFactor = CurrentSunState.ElevationAngle / 10.f;
+		SunParams.SkyColor = FMath::Lerp(TwilightSkyColor, DaySkyColor, SunriseBlendFactor);
 	}
 	else
 	{
-		SunParams.SunLightIntensity = SunState.NormalizedIntensity * MaxSunlightLux;
-		
-		if(SunState.ElevationAngle < 15.f)
-			SunParams.SunLightColor = FLinearColor::LerpUsingHSV(SunriseColor, NoonColor, SunState.ElevationAngle / 15.f);
-		else
-			SunParams.SunLightColor = FLinearColor::LerpUsingHSV(NoonColor * 0.9f, NoonColor, FMath::Clamp((SunState.ElevationAngle - 15.f) / 75.f, 0.f, 1.f));
+		SunParams.SkyColor = DaySkyColor;
 	}
 
-	if(bIsNight == true)
-		SunParams.SkyColor = FLinearColor(0.01f, 0.01f, 0.04f);
-	else if(SunState.ElevationAngle < 10.0f)
-		SunParams.SkyColor = FLinearColor::LerpUsingHSV(FLinearColor(0.3f, 0.1f, 0.f), FLinearColor(0.05f, 0.15f, 0.5f), SunState.ElevationAngle / 10.f);
-	else
-		SunParams.SkyColor = FLinearColor(0.05f, 0.15f, 0.5f);
-
-	SunParams.FogDensity = FMath::Lerp(0.008f, 0.015f, FMath::Clamp(SunState.ElevationAngle / 30.f, 0.f, 1.f));
-
-	const float DaySkyLight = FMath::Clamp(SunState.NormalizedIntensity * 2.0f, 0.0f, 2.f);
-	const float NightSkyLight = FMath::Lerp(0.03f, 0.25f, MoonPhase);
-	
-	SunParams.SkyLightIntensity = ( bIsNight==true ) ? NightSkyLight : FMath::Max(DaySkyLight, 0.1f);
+	SunParams.FogDensity = FMath::Lerp(0.008f, 0.015f, FMath::Clamp(CurrentSunState.ElevationAngle / 30.f, 0.f, 1.f));
 
 	const float Clarity = CurrentBiomeInfluence.AtmosphericClarity;
 	SunParams.MieScatteringScale = FMath::Lerp(0.5f, 0.05f, Clarity);
@@ -491,17 +585,20 @@ FSeedExt_SunAtomsphereParams ASeedExt_Sun::ComputeAtmosphereParams() const
 }
 void ASeedExt_Sun::ApplyAtmosphereParams(const FSeedExt_SunAtomsphereParams& InParams)
 {
-	if(DirectionalLightComponent != nullptr)
+	if(SunDirectionalLightComponent != nullptr)
 	{
-		DirectionalLightComponent->SetLightColor(InParams.SunLightColor);
-		DirectionalLightComponent->SetIntensity(InParams.SunLightIntensity);
+		SunDirectionalLightComponent->SetLightColor(InParams.SunLightColor);
+		SunDirectionalLightComponent->SetIntensity(InParams.SunLightIntensity);
+	}
+	if(MoonDirectionalLightComponent != nullptr)
+	{
+		MoonDirectionalLightComponent->SetLightColor(InParams.MoonLightColor);
+		MoonDirectionalLightComponent->SetIntensity(InParams.MoonLightIntensity);
 	}
 
 	if(SkyLightComponent != nullptr)
 	{
 		SkyLightComponent->SetIntensity(InParams.SkyLightIntensity);
-		// if(SkyLightComponent->bRealTimeCapture == false)
-		// 	SkyLightComponent->RecaptureSky();
 	}
 
 	if(SkyAtmosphereComponent != nullptr)
@@ -526,25 +623,21 @@ void ASeedExt_Sun::ApplyPostProcessSettings()
 	PostProcessSettings.bOverride_AutoExposureMethod = true;
 	PostProcessSettings.AutoExposureMethod = EAutoExposureMethod::AEM_Histogram;
 
-	const float NormalizedLux = FMath::Clamp(MaxSunlightLux / 75000.f, 0.01f, 1.f);
-	const bool bIsNight = (CurrentSunState.ElevationAngle <= 0.0f);
-	const float MoonPhase = FMath::Abs(FMath::Sin(DayTime * PI));
+	//const float NormalizedLux = FMath::Clamp(MaxSunlightLux / 75000.f, 0.01f, 1.f);
+	const float NormalizedLux = FMath::Clamp(CurrentSunState.NormalizedIntensity, 0.01f, 1.f);
 
-	float ExposureMin = 0, ExposureMax = 0;
-	if(bIsNight == true)
-	{
-		ExposureMin = FMath::Lerp(-8.f, -2.f, MoonPhase);
-		ExposureMax = FMath::Lerp(0.f, 4.f, MoonPhase);
+	const float NightExposureMin = FMath::Lerp(-8.f, -2.f, CurrentMoonState.MoonPhase);
+	const float NightNormalizedLux = MoonlightIntensity * 75000.f;
+	const float MoonMaxEV = FMath::Log2(FMath::Max(NightNormalizedLux, 1.f) / 12.5f);
+	const float NightExposureMax = FMath::Lerp(-1.f, MoonMaxEV, CurrentMoonState.MoonPhase);
 
-		// PostProcessSettings.BloomIntensity = 0.675f;
-	}
-	else
-	{
-		ExposureMin = FMath::Lerp(4.f, 6.f, NormalizedLux);
-		ExposureMax = FMath::Lerp(10.f, 14.f, NormalizedLux);
+	const float DayExposureMin = FMath::Lerp(4.f, 6.f, NormalizedLux);
+	const float DayExposureMax = FMath::Lerp(10.f, 14.f, NormalizedLux);
 
-		// PostProcessSettings.BloomIntensity = 0.4f;
-	}
+	const float DawnDuskBlendFactor = FMath::Clamp((CurrentSunState.ElevationAngle + 5.f)/25.f, 0.f, 1.f);
+
+	const float ExposureMin = FMath::Lerp(NightExposureMin, DayExposureMin, DawnDuskBlendFactor);
+	const float ExposureMax = FMath::Lerp(NightExposureMax, DayExposureMax, DawnDuskBlendFactor);
 
 	PostProcessSettings.bOverride_AutoExposureMinBrightness = true;
 	PostProcessSettings.bOverride_AutoExposureMaxBrightness = true;
@@ -553,8 +646,8 @@ void ASeedExt_Sun::ApplyPostProcessSettings()
 	
 	PostProcessSettings.bOverride_AutoExposureSpeedUp = true;
 	PostProcessSettings.bOverride_AutoExposureSpeedDown = true;
-	PostProcessSettings.AutoExposureSpeedUp = 3.f;
-	PostProcessSettings.AutoExposureSpeedDown = 1.f;
+	PostProcessSettings.AutoExposureSpeedUp = 1.5f;
+	PostProcessSettings.AutoExposureSpeedDown = 0.8f;
 	
 	PostProcessSettings.bOverride_FilmToe = false;
 	PostProcessSettings.bOverride_BloomIntensity = true;

@@ -20,6 +20,10 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
+
+	
 };

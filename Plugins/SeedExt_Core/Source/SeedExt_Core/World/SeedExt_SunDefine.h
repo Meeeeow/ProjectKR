@@ -84,6 +84,27 @@ struct FSeedExt_SunState
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FSeedExt_MoonState
+{
+	GENERATED_BODY()
+
+	/** 달 고도각 (지평선 기준, 양수 = 지평선 위) */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Moon")
+	float ElevationAngle = -90.f;
+	/** 달 방위각 (북쪽 기준 시계방향) */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Moon")
+	float Azimuth = 0.f;
+	/** 달 위상 (0 = 신월, 1 = 보름달) */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Moon")
+	float MoonPhase = 0.f;
+	/** 달빛 조도 (Lux). 지평선 아래면 0 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Moon")
+	float LightIntensity = 0.f;
+
+	bool IsAboveHorizon() const { return ElevationAngle > 0.0f; }
+};
+
 /** FSeedExt_InfluenceState의 영역을 결정하기 위한 파라미터 */
 USTRUCT(BlueprintType)
 struct FSeedExt_InfluenceZone
@@ -171,6 +192,13 @@ struct FSeedExt_SunAtomsphereParams
 	/** Mie 산란 강도 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Atmosphere")
 	float MieScatteringScale = 0.1f;
+
+	/** 달빛 색상 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Atmosphere")
+	FLinearColor MoonLightColor = FLinearColor(0.7f, 0.8f, 1.0f);
+	/** 달빛 강도 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Atmosphere")
+	float MoonLightIntensity = 0.f;
 };
 
 class FSeedExt_InfluenceChangedDelegator : public FSeedExt_DelegateWrapper<FSeedExt_InfluenceChangedDelegate>

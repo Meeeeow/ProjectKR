@@ -35,7 +35,10 @@ public:
 protected:
 	/** 태양 방향광 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Components")
-	TObjectPtr<class UDirectionalLightComponent> DirectionalLightComponent = nullptr;
+	TObjectPtr<class UDirectionalLightComponent> SunDirectionalLightComponent = nullptr;
+	/** 달 방향광 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Components")
+	TObjectPtr<class UDirectionalLightComponent> MoonDirectionalLightComponent = nullptr; 
 	/** 빛 색상 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Components")
 	TObjectPtr<class USkyLightComponent> SkyLightComponent = nullptr;
@@ -47,7 +50,10 @@ protected:
 	TObjectPtr<class UExponentialHeightFogComponent> ExponentialHeightFogComponent = nullptr;
 	/** 태양 메시 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Components")
-	TObjectPtr<class UStaticMeshComponent> StaticMeshComponent = nullptr;
+	TObjectPtr<class UStaticMeshComponent> SunStaticMeshComponent = nullptr;
+	/** 달 메시 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Components")
+	TObjectPtr<class UStaticMeshComponent> MoonStaticMeshComponent = nullptr;
 	/** Post Process */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Components")
 	TObjectPtr<class UPostProcessComponent> PostProcessComponent = nullptr;
@@ -58,6 +64,9 @@ protected:
 	/** 시간 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info",meta=(ClampMin="0",ClampMax="1",UIMin="0",UIMax="1"))
 	float DayTime = 0.5f;
+	/** 달 주기 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info",meta=(ClampMin="0",ClampMax="1",UIMin="0",UIMax="1"))
+	float LunarCycle = 0.f;
 	/** 연간 주기 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info",meta=(ClampMin="0",ClampMax="1",UIMin="0",UIMax="1"))
 	float SeasonCycle = 0.25f;
@@ -83,10 +92,25 @@ protected:
 	/** 정오 태양광 색상 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
 	FLinearColor NoonColor = FLinearColor(1.0f, 0.98f, 0.9f);
+	/** 달빛 색상 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
+	FLinearColor MoonColor = FLinearColor(0.7f, 0.8f, 1.f);
+	/** 심야 색상 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
+	FLinearColor DeepNightSkyColor = FLinearColor(0.01f, 0.01f, 0.04f);
+	/** 박명 색상 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
+	FLinearColor TwilightSkyColor = FLinearColor(0.06f, 0.02f, 0.01f);
+	/** 낮 색상 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
+	FLinearColor DaySkyColor = FLinearColor(0.05f, 0.15f, 0.5f);
  
 	/** 현재 태양 물리 상태 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
 	FSeedExt_SunState CurrentSunState;
+	/** 현재 달 물리 상태 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
+	FSeedExt_MoonState CurrentMoonState;
 	/** 현재 바이옴 영향 파라미터 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
 	FSeedExt_InfluenceState CurrentBiomeInfluence;
@@ -102,15 +126,16 @@ public:
 
 	UFUNCTION(BlueprintPure,Category="SeedExt|Events")
 	FSeedExt_InfluenceState GetBiomeInfluenceState() const { return CurrentBiomeInfluence; }
-
 	UFUNCTION(BlueprintPure,Category="SeedExt|Events")
 	FSeedExt_SunState GetSunState() const { return CurrentSunState; }
-
+	UFUNCTION(BlueprintPure,Category="SeedExt|Events")
+	FSeedExt_MoonState GetMoonState() const { return CurrentMoonState; }
 	UFUNCTION(BlueprintPure,Category="SeedExt|Events")
 	FSeedExt_InfluenceState GetBiomeInfluenceStateAtLocation(const FVector& InLocation) const;
 
 private:
 	void ComputeSunState();
+	void ComputeMoonState();
 	void ComputeBiomeInfluence();
 	FSeedExt_SunAtomsphereParams ComputeAtmosphereParams() const;
 	void ApplyAtmosphereParams(const FSeedExt_SunAtomsphereParams& InParams);
@@ -122,6 +147,8 @@ private:
 	float BiomeInfluenceAccum = 0.0f;
 
 	static constexpr float BiomeUpdateInterval = 1.f;
+	float LastSkyCaptureElevationAngle = -FLT_MAX;
+	static constexpr float SkyRecaptureThresholdDegree = 5.f;
 	
 	SEEDEXT_DECLARE_DELEGATE_WRAPPER(FSeedExt_InfluenceChangedDelegator,FSeedExt_InfluenceChangedDelegate,InfluenceChanged)
 	SEEDEXT_DECLARE_DELEGATE_WRAPPER(FSeedExt_SeasonChangedDelegator,FSeedExt_SeasonChangedDelegate,SeasonChanged)

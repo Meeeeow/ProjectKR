@@ -1,42 +1,80 @@
 {
-	"directionalLightComponent": "/Script/Engine.DirectionalLightComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.DirectionalLight'",
+	"sunDirectionalLightComponent": "/Script/Engine.DirectionalLightComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SunDirectionalLight'",
+	"moonDirectionalLightComponent": "/Script/Engine.DirectionalLightComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.MoonDirectionalLight'",
 	"skyLightComponent": "/Script/Engine.SkyLightComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SkyLight'",
 	"skyAtmosphereComponent": "/Script/Engine.SkyAtmosphereComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SkyAtmosphere'",
 	"exponentialHeightFogComponent": "/Script/Engine.ExponentialHeightFogComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.HeightFog'",
-	"staticMeshComponent": "/Script/Engine.StaticMeshComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SunMesh'",
+	"sunStaticMeshComponent": "/Script/Engine.StaticMeshComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SunStaticMesh'",
+	"moonStaticMeshComponent": "/Script/Engine.StaticMeshComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.MoonStaticMesh'",
 	"postProcessComponent": "/Script/Engine.PostProcessComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.PostProcess'",
 	"latitudeDegree": 46,
-	"dayTime": 0.20000000298023224,
+	"dayTime": 0.27539458870887756,
+	"lunarCycle": 0.10000000149011612,
 	"seasonCycle": 0.62679398059844971,
 	"dayTimeScale": 3000,
 	"seasonCycleScale": 0,
 	"maxSunlightLux": 75000,
-	"moonlightIntensity": 0.30000001192092896,
+	"moonlightIntensity": 0.0080000003799796104,
 	"astronomicalUnit": 1200000,
 	"sunriseColor":
 	{
-		"r": 0.75,
-		"g": 0.28901800513267517,
-		"b": 0.1992190033197403,
+		"r": 1,
+		"g": 0.41999998688697815,
+		"b": 0.11999999731779099,
 		"a": 1
 	},
 	"noonColor":
 	{
 		"r": 1,
-		"g": 0.59657502174377441,
-		"b": 0.27604201436042786,
+		"g": 0.97000002861022949,
+		"b": 0.89999997615814209,
+		"a": 1
+	},
+	"moonColor":
+	{
+		"r": 0.72000002861022949,
+		"g": 0.81999999284744263,
+		"b": 1,
+		"a": 1
+	},
+	"deepNightSkyColor":
+	{
+		"r": 0.012000000104308128,
+		"g": 0.012000000104308128,
+		"b": 0.045000001788139343,
+		"a": 1
+	},
+	"twilightSkyColor":
+	{
+		"r": 0.2199999988079071,
+		"g": 0.070000000298023224,
+		"b": 0.029999999329447746,
+		"a": 1
+	},
+	"daySkyColor":
+	{
+		"r": 0.059999998658895493,
+		"g": 0.17000000178813934,
+		"b": 0.46000000834465027,
 		"a": 1
 	},
 	"currentSunState":
 	{
-		"elevationAngle": -8.084437370300293,
-		"azimuth": 72.87298583984375,
-		"normalizedIntensity": 0,
-		"dayTime": 0.20000000298023224,
+		"elevationAngle": 10.528453826904297,
+		"azimuth": 92.523086547851562,
+		"normalizedIntensity": 0.027355484664440155,
+		"dayTime": 0.27539458870887756,
 		"seasonCycle": 0.62679398059844971,
 		"seasonType": "Autumn",
-		"colorKelvinTemperature": 2000,
+		"colorKelvinTemperature": 4039.634033203125,
 		"dayLightFraction": 0.53365081548690796
+	},
+	"currentMoonState":
+	{
+		"elevationAngle": 44.2708740234375,
+		"azimuth": 143.67770385742188,
+		"moonPhase": 0.30901700258255005,
+		"lightIntensity": 185.41021728515625
 	},
 	"currentBiomeInfluence":
 	{
@@ -48,7 +86,7 @@
 		"seasonalPrecipitation": 1.2000000476837158,
 		"latitudeBandType": "Polar",
 		"seasonalWarmth": 0.85751605033874512,
-		"atmosphericClarity": 0.40000000596046448
+		"atmosphericClarity": 0.47018969058990479
 	},
 	"influenceZone_List": [
 		{
@@ -200,7 +238,7 @@
 	"instanceComponents": [],
 	"blueprintCreatedComponents": []
 }
-[AdditiveObject:DirectionalLight]{
+[AdditiveObject:SunDirectionalLight]{
 	"shadowCascadeBiasDistribution": 1,
 	"bEnableLightShaftOcclusion": false,
 	"occlusionMaskDarkness": 0.05000000074505806,
@@ -221,7 +259,7 @@
 	"farShadowCascadeCount": 0,
 	"farShadowDistance": 300000,
 	"distanceFieldShadowDistance": 51200,
-	"forwardShadingPriority": 0,
+	"forwardShadingPriority": 1,
 	"lightSourceAngle": 0.53570002317428589,
 	"lightSourceSoftAngle": 0,
 	"shadowSourceAngleFactor": 1,
@@ -317,12 +355,12 @@
 	"bUseRayTracedDistanceFieldShadows": true,
 	"rayStartOffsetDepthScale": 0.0030000000260770321,
 	"lightGuid": "00000000000000000000000000000000",
-	"intensity": 13225.16796875,
+	"intensity": 2051.661376953125,
 	"lightColor":
 	{
-		"b": 108,
-		"g": 75,
-		"r": 63,
+		"b": 213,
+		"g": 232,
+		"r": 255,
 		"a": 255
 	},
 	"bAffectsWorld": true,
@@ -346,13 +384,222 @@
 	{
 		"x": 0,
 		"y": 0,
-		"z": 1200000
+		"z": 0
 	},
 	"relativeRotation":
 	{
-		"pitch": 8.0844373703002983,
-		"yaw": -107.12701416015629,
-		"roll": -8.0312016476586282e-16
+		"pitch": -10.528453826904302,
+		"yaw": -87.476913452148438,
+		"roll": 0
+	},
+	"relativeScale3D":
+	{
+		"x": 1,
+		"y": 1,
+		"z": 1
+	},
+	"componentVelocity":
+	{
+		"x": 0,
+		"y": 0,
+		"z": 0
+	},
+	"bAbsoluteLocation": false,
+	"bAbsoluteRotation": false,
+	"bAbsoluteScale": false,
+	"bVisible": true,
+	"bShouldUpdatePhysicsVolume": false,
+	"bHiddenInGame": false,
+	"bBoundsChangeTriggersStreamingDataRebuild": false,
+	"bUseAttachParentBound": false,
+	"bComputeFastLocalBounds": false,
+	"bComputeBoundsOnceForGame": false,
+	"bComputedBoundsOnceForGame": false,
+	"bIsNotRenderAttachmentRoot": false,
+	"bVisualizeComponent": true,
+	"mobility": "Movable",
+	"detailMode": "DM_Low",
+	"physicsVolumeChangedDelegate": "()",
+	"primaryComponentTick":
+	{
+		"tickGroup": "TG_DuringPhysics",
+		"endTickGroup": "TG_PrePhysics",
+		"bTickEvenWhenPaused": false,
+		"bCanEverTick": false,
+		"bStartWithTickEnabled": true,
+		"bAllowTickOnDedicatedServer": true,
+		"tickInterval": 0
+	},
+	"componentTags": [],
+	"assetUserData": [],
+	"assetUserDataEditorOnly": [],
+	"uCSSerializationIndex": -1,
+	"bNetAddressable": false,
+	"bReplicateUsingRegisteredSubObjectList": false,
+	"bReplicates": false,
+	"bAutoActivate": false,
+	"bEditableWhenInherited": true,
+	"bCanEverAffectNavigation": false,
+	"bIsEditorOnly": false,
+	"bIsVisualizationComponent": false,
+	"bNeedsUCSSerializationIndexEvaluted": false,
+	"creationMethod": "Native",
+	"onComponentActivated": "()",
+	"onComponentDeactivated": "()"
+}
+[AdditiveObject:MoonDirectionalLight]{
+	"shadowCascadeBiasDistribution": 0.86320197582244873,
+	"bEnableLightShaftOcclusion": false,
+	"occlusionMaskDarkness": 0.05000000074505806,
+	"occlusionDepthRange": 100000,
+	"lightShaftOverrideDirection":
+	{
+		"x": 0,
+		"y": 0,
+		"z": 0
+	},
+	"dynamicShadowDistanceMovableLight": 0,
+	"dynamicShadowDistanceStationaryLight": 0,
+	"dynamicShadowCascades": 4,
+	"cascadeDistributionExponent": 3,
+	"cascadeTransitionFraction": 0.10000000149011612,
+	"shadowDistanceFadeoutFraction": 0.10000000149011612,
+	"bUseInsetShadowsForMovableObjects": true,
+	"farShadowCascadeCount": 0,
+	"farShadowDistance": 300000,
+	"distanceFieldShadowDistance": 51200,
+	"forwardShadingPriority": 0,
+	"lightSourceAngle": 0.53570002317428589,
+	"lightSourceSoftAngle": 0,
+	"shadowSourceAngleFactor": 1,
+	"traceDistance": 10000,
+	"bAtmosphereSunLight": false,
+	"atmosphereSunLightIndex": 0,
+	"atmosphereSunDiskColorScale":
+	{
+		"r": 1,
+		"g": 1,
+		"b": 1,
+		"a": 1
+	},
+	"bPerPixelAtmosphereTransmittance": false,
+	"bCastShadowsOnClouds": false,
+	"bCastShadowsOnAtmosphere": false,
+	"bCastCloudShadows": false,
+	"cloudShadowStrength": 1,
+	"cloudShadowOnAtmosphereStrength": 1,
+	"cloudShadowOnSurfaceStrength": 1,
+	"cloudShadowDepthBias": 0,
+	"cloudShadowExtent": 150,
+	"cloudShadowMapResolutionScale": 1,
+	"cloudShadowRaySampleCountScale": 1,
+	"cloudScatteredLuminanceScale":
+	{
+		"r": 1,
+		"g": 1,
+		"b": 1,
+		"a": 1
+	},
+	"lightmassSettings":
+	{
+		"lightSourceAngle": 1,
+		"indirectLightingSaturation": 1,
+		"shadowExponent": 2,
+		"bUseAreaShadowsForStationaryLight": false
+	},
+	"bCastModulatedShadows": false,
+	"modulatedShadowColor":
+	{
+		"b": 128,
+		"g": 128,
+		"r": 128,
+		"a": 255
+	},
+	"shadowAmount": 1,
+	"temperature": 6500,
+	"maxDrawDistance": 0,
+	"maxDistanceFadeRange": 0,
+	"bUseTemperature": true,
+	"specularScale": 1,
+	"shadowResolutionScale": 1,
+	"shadowBias": 0.5,
+	"shadowSlopeBias": 0.5,
+	"shadowSharpen": 0,
+	"contactShadowLength": 0,
+	"contactShadowLengthInWS": false,
+	"contactShadowCastingIntensity": 1,
+	"contactShadowNonCastingIntensity": 0,
+	"castTranslucentShadows": true,
+	"bCastShadowsFromCinematicObjectsOnly": false,
+	"bForceCachedShadowsForMovablePrimitives": false,
+	"lightingChannels":
+	{
+		"bChannel0": true,
+		"bChannel1": false,
+		"bChannel2": false
+	},
+	"lightFunctionMaterial": "None",
+	"lightFunctionScale":
+	{
+		"x": 1024,
+		"y": 1024,
+		"z": 1024
+	},
+	"iESTexture": "None",
+	"bUseIESBrightness": false,
+	"iESBrightnessScale": 1,
+	"lightFunctionFadeDistance": 100000,
+	"disabledBrightness": 0.5,
+	"bEnableLightShaftBloom": false,
+	"bloomScale": 0.20000000298023224,
+	"bloomThreshold": 0,
+	"bloomMaxBrightness": 100,
+	"bloomTint":
+	{
+		"b": 255,
+		"g": 255,
+		"r": 255,
+		"a": 255
+	},
+	"bUseRayTracedDistanceFieldShadows": true,
+	"rayStartOffsetDepthScale": 0.0030000000260770321,
+	"lightGuid": "00000000000000000000000000000000",
+	"intensity": 185.41021728515625,
+	"lightColor":
+	{
+		"b": 255,
+		"g": 234,
+		"r": 221,
+		"a": 255
+	},
+	"bAffectsWorld": true,
+	"castShadows": false,
+	"castStaticShadows": true,
+	"castDynamicShadows": true,
+	"bAffectTranslucentLighting": true,
+	"bTransmission": false,
+	"bCastVolumetricShadow": true,
+	"bCastDeepShadow": false,
+	"castRaytracedShadow": "UseProjectSetting",
+	"bAffectReflection": true,
+	"bAffectGlobalIllumination": true,
+	"deepShadowLayerDistribution": 0.5,
+	"indirectLightingIntensity": 1,
+	"volumetricScatteringIntensity": 1,
+	"samplesPerPixel": 1,
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachSocketName": "None",
+	"relativeLocation":
+	{
+		"x": 0,
+		"y": 0,
+		"z": 0
+	},
+	"relativeRotation":
+	{
+		"pitch": -44.270874023437521,
+		"yaw": -36.322296142578139,
+		"roll": 0
 	},
 	"relativeScale3D":
 	{
@@ -443,7 +690,7 @@
 	"cloudAmbientOcclusionApertureScale": 0.05000000074505806,
 	"occlusionCombineMode": "OCM_Minimum",
 	"lightGuid": "00000000000000000000000000000000",
-	"intensity": 0.15931275486946106,
+	"intensity": 0.10000000149011612,
 	"lightColor":
 	{
 		"b": 255,
@@ -557,7 +804,7 @@
 		"a": 30.211479187011719
 	},
 	"rayleighExponentialDistribution": 8,
-	"mieScatteringScale": 0.31999999284744263,
+	"mieScatteringScale": 0.28841465711593628,
 	"mieScattering":
 	{
 		"r": 1,
@@ -673,7 +920,7 @@
 	"onComponentDeactivated": "()"
 }
 [AdditiveObject:HeightFog]{
-	"fogDensity": 0.0080000003799796104,
+	"fogDensity": 0.010456639342010021,
 	"fogHeightFalloff": 0.20000000298023224,
 	"secondFogData":
 	{
@@ -683,9 +930,9 @@
 	},
 	"fogInscatteringLuminance":
 	{
-		"r": 0.0099999997764825821,
-		"g": 0.0099999997764825821,
-		"b": 0.039999999105930328,
+		"r": 0.059999998658895493,
+		"g": 0.17000000178813934,
+		"b": 0.46000000834465027,
 		"a": 1
 	},
 	"skyAtmosphereAmbientContributionColorScale":
@@ -811,11 +1058,11 @@
 	"onComponentActivated": "()",
 	"onComponentDeactivated": "()"
 }
-[AdditiveObject:SunMesh]{
+[AdditiveObject:SunStaticMesh]{
 	"forcedLodModel": 0,
 	"minLOD": 0,
 	"subDivisionStepSize": 32,
-	"staticMesh": "/Script/Engine.StaticMesh'/Game/RamsterZ_FreeAnims_Volume1/Demo/Floors_and_Walls/Mesh/1M_Cube.1M_Cube'",
+	"staticMesh": "None",
 	"wireframeColorOverride":
 	{
 		"b": 255,
@@ -1022,7 +1269,7 @@
 			"walkableSlopeAngle": 0
 		},
 		"physMaterialOverride": "None",
-		"maxAngularVelocity": 3599.999755859375,
+		"maxAngularVelocity": 3600,
 		"customSleepThresholdMultiplier": 1,
 		"stabilizationThresholdMultiplier": 1,
 		"physicsBlendWeight": 0,
@@ -1057,9 +1304,9 @@
 	"attachSocketName": "None",
 	"relativeLocation":
 	{
-		"x": 220657.9856911994,
-		"y": 1181861.3317993185,
-		"z": -24638.046936278664
+		"x": 0,
+		"y": 0,
+		"z": 0
 	},
 	"relativeRotation":
 	{
@@ -1069,9 +1316,320 @@
 	},
 	"relativeScale3D":
 	{
-		"x": 1.5,
-		"y": 1.5,
-		"z": 1.5
+		"x": 1,
+		"y": 1,
+		"z": 1
+	},
+	"componentVelocity":
+	{
+		"x": 0,
+		"y": 0,
+		"z": 0
+	},
+	"bAbsoluteLocation": true,
+	"bAbsoluteRotation": true,
+	"bAbsoluteScale": false,
+	"bVisible": true,
+	"bShouldUpdatePhysicsVolume": false,
+	"bHiddenInGame": false,
+	"bBoundsChangeTriggersStreamingDataRebuild": true,
+	"bUseAttachParentBound": false,
+	"bComputeFastLocalBounds": false,
+	"bComputeBoundsOnceForGame": false,
+	"bComputedBoundsOnceForGame": false,
+	"bIsNotRenderAttachmentRoot": false,
+	"bVisualizeComponent": false,
+	"mobility": "Movable",
+	"detailMode": "DM_Low",
+	"physicsVolumeChangedDelegate": "()",
+	"primaryComponentTick":
+	{
+		"tickGroup": "TG_DuringPhysics",
+		"endTickGroup": "TG_PrePhysics",
+		"bTickEvenWhenPaused": false,
+		"bCanEverTick": false,
+		"bStartWithTickEnabled": true,
+		"bAllowTickOnDedicatedServer": true,
+		"tickInterval": 0
+	},
+	"componentTags": [],
+	"assetUserData": [],
+	"assetUserDataEditorOnly": [],
+	"uCSSerializationIndex": -1,
+	"bNetAddressable": false,
+	"bReplicateUsingRegisteredSubObjectList": false,
+	"bReplicates": false,
+	"bAutoActivate": false,
+	"bEditableWhenInherited": true,
+	"bCanEverAffectNavigation": true,
+	"bIsEditorOnly": false,
+	"bIsVisualizationComponent": false,
+	"bNeedsUCSSerializationIndexEvaluted": false,
+	"creationMethod": "Native",
+	"onComponentActivated": "()",
+	"onComponentDeactivated": "()"
+}
+[AdditiveObject:MoonStaticMesh]{
+	"forcedLodModel": 0,
+	"minLOD": 0,
+	"subDivisionStepSize": 32,
+	"staticMesh": "None",
+	"wireframeColorOverride":
+	{
+		"b": 255,
+		"g": 255,
+		"r": 255,
+		"a": 255
+	},
+	"bForceNaniteForMasked": false,
+	"bDisallowNanite": false,
+	"bForceDisableNanite": false,
+	"bEvaluateWorldPositionOffset": true,
+	"bWorldPositionOffsetWritesVelocity": true,
+	"bEvaluateWorldPositionOffsetInRayTracing": false,
+	"worldPositionOffsetDisableDistance": 0,
+	"staticMeshImportVersion": 0,
+	"bOverrideWireframeColor": false,
+	"bOverrideMinLOD": false,
+	"bDisallowMeshPaintPerInstance": false,
+	"bIgnoreInstanceForTextureStreaming": false,
+	"bOverrideLightMapRes": false,
+	"bCastDistanceFieldIndirectShadow": false,
+	"bOverrideDistanceFieldSelfShadowBias": false,
+	"bUseSubDivisions": true,
+	"bUseDefaultCollision": false,
+	"bCustomOverrideVertexColorPerLOD": false,
+	"bDisplayNaniteFallbackMesh": false,
+	"bSortTriangles": false,
+	"bReverseCulling": false,
+	"overriddenLightMapRes": 64,
+	"distanceFieldIndirectShadowMinVisibility": 0.10000000149011612,
+	"distanceFieldSelfShadowBias": 0,
+	"streamingDistanceMultiplier": 1,
+	"streamingTextureData": [],
+	"staticMeshDerivedDataKey": "",
+	"materialStreamingRelativeBoxes": [],
+	"lightmassSettings":
+	{
+		"bUseTwoSidedLighting": false,
+		"bShadowIndirectOnly": false,
+		"bUseEmissiveForStaticLighting": false,
+		"bUseVertexNormalForHemisphereGather": false,
+		"emissiveLightFalloffExponent": 8,
+		"emissiveLightExplicitInfluenceRadius": 0,
+		"emissiveBoost": 1,
+		"diffuseBoost": 1,
+		"fullyOccludedSamplesFraction": 1
+	},
+	"overrideMaterials": [],
+	"overlayMaterial": "None",
+	"overlayMaterialMaxDrawDistance": 0,
+	"bEnableMaterialParameterCaching": false,
+	"minDrawDistance": 0,
+	"lDMaxDrawDistance": 0,
+	"cachedMaxDrawDistance": 0,
+	"depthPriorityGroup": "SDPG_World",
+	"viewOwnerDepthPriorityGroup": "SDPG_World",
+	"indirectLightingCacheQuality": "ILCQ_Point",
+	"lightmapType": "Default",
+	"hLODBatchingPolicy": "None",
+	"bEnableAutoLODGeneration": true,
+	"bIsActorTextureStreamingBuiltData": false,
+	"bIsValidTextureStreamingBuiltData": false,
+	"bNeverDistanceCull": false,
+	"bAlwaysCreatePhysicsState": false,
+	"bGenerateOverlapEvents": true,
+	"bMultiBodyOverlap": false,
+	"bTraceComplexOnMove": false,
+	"bReturnMaterialOnMove": false,
+	"bUseViewOwnerDepthPriorityGroup": false,
+	"bAllowCullDistanceVolume": true,
+	"bVisibleInReflectionCaptures": true,
+	"bVisibleInRealTimeSkyCaptures": true,
+	"bVisibleInRayTracing": true,
+	"bRenderInMainPass": true,
+	"bRenderInDepthPass": true,
+	"bReceivesDecals": true,
+	"bHoldout": false,
+	"bOwnerNoSee": false,
+	"bOnlyOwnerSee": false,
+	"bTreatAsBackgroundForOcclusion": false,
+	"bUseAsOccluder": true,
+	"bSelectable": true,
+	"bConsiderForActorPlacementWhenHidden": false,
+	"bForceMipStreaming": false,
+	"bHasPerInstanceHitProxies": false,
+	"castShadow": false,
+	"bEmissiveLightSource": false,
+	"bAffectDynamicIndirectLighting": true,
+	"bAffectIndirectLightingWhileHidden": false,
+	"bAffectDistanceFieldLighting": true,
+	"bCastDynamicShadow": true,
+	"bCastStaticShadow": true,
+	"shadowCacheInvalidationBehavior": "Auto",
+	"bCastVolumetricTranslucentShadow": false,
+	"bCastContactShadow": true,
+	"bSelfShadowOnly": false,
+	"bCastFarShadow": false,
+	"bCastInsetShadow": false,
+	"bCastCinematicShadow": false,
+	"bCastHiddenShadow": false,
+	"bCastShadowAsTwoSided": false,
+	"bLightAttachmentsAsGroup": false,
+	"bExcludeFromLightAttachmentGroup": false,
+	"bReceiveMobileCSMShadows": true,
+	"bSingleSampleShadowFromStationaryLights": false,
+	"bIgnoreRadialImpulse": false,
+	"bIgnoreRadialForce": false,
+	"bApplyImpulseOnDamage": true,
+	"bReplicatePhysicsToAutonomousProxy": true,
+	"bFillCollisionUnderneathForNavmesh": false,
+	"alwaysLoadOnClient": true,
+	"alwaysLoadOnServer": true,
+	"bUseEditorCompositing": false,
+	"bRenderCustomDepth": false,
+	"bVisibleInSceneCaptureOnly": false,
+	"bHiddenInSceneCapture": false,
+	"bRayTracingFarField": false,
+	"bHasNoStreamableTextures": false,
+	"bStaticWhenNotMoveable": true,
+	"bHasCustomNavigableGeometry": "Yes",
+	"hitProxyPriority": "HPP_World",
+	"canCharacterStepUpOn": "ECB_Yes",
+	"lightingChannels":
+	{
+		"bChannel0": true,
+		"bChannel1": false,
+		"bChannel2": false
+	},
+	"rayTracingGroupId": -1,
+	"visibilityId": -1,
+	"customDepthStencilValue": 0,
+	"customPrimitiveData":
+	{
+		"data": []
+	},
+	"translucencySortPriority": 0,
+	"translucencySortDistanceOffset": 0,
+	"runtimeVirtualTextures": [],
+	"virtualTextureLodBias": 0,
+	"virtualTextureCullMips": 0,
+	"virtualTextureMinCoverage": 0,
+	"virtualTextureRenderPassType": "Exclusive",
+	"boundsScale": 1,
+	"bodyInstance":
+	{
+		"objectType": "ECC_WorldDynamic",
+		"collisionEnabled": "NoCollision",
+		"sleepFamily": "Normal",
+		"dOFMode": "Default",
+		"bUseCCD": false,
+		"bUseMACD": false,
+		"bIgnoreAnalyticCollisions": false,
+		"bNotifyRigidBodyCollision": false,
+		"bSmoothEdgeCollisions": false,
+		"bLockTranslation": true,
+		"bLockRotation": true,
+		"bLockXTranslation": false,
+		"bLockYTranslation": false,
+		"bLockZTranslation": false,
+		"bLockXRotation": false,
+		"bLockYRotation": false,
+		"bLockZRotation": false,
+		"bOverrideMaxAngularVelocity": false,
+		"bOverrideMaxDepenetrationVelocity": false,
+		"bOverrideWalkableSlopeOnInstance": false,
+		"bInterpolateWhenSubStepping": true,
+		"bInertiaConditioning": true,
+		"bOneWayInteraction": false,
+		"bOverrideSolverAsyncDeltaTime": false,
+		"solverAsyncDeltaTime": 0.01666666753590107,
+		"collisionProfileName": "Custom",
+		"positionSolverIterationCount": 8,
+		"velocitySolverIterationCount": 1,
+		"collisionResponses":
+		{
+			"responseArray": []
+		},
+		"maxDepenetrationVelocity": 0,
+		"massInKgOverride": 100,
+		"linearDamping": 0.0099999997764825821,
+		"angularDamping": 0,
+		"customDOFPlaneNormal":
+		{
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"cOMNudge":
+		{
+			"x": 0,
+			"y": 0,
+			"z": 0
+		},
+		"massScale": 1,
+		"inertiaTensorScale":
+		{
+			"x": 1,
+			"y": 1,
+			"z": 1
+		},
+		"walkableSlopeOverride":
+		{
+			"walkableSlopeBehavior": "WalkableSlope_Default",
+			"walkableSlopeAngle": 0
+		},
+		"physMaterialOverride": "None",
+		"maxAngularVelocity": 3600,
+		"customSleepThresholdMultiplier": 1,
+		"stabilizationThresholdMultiplier": 1,
+		"physicsBlendWeight": 0,
+		"bSimulatePhysics": false,
+		"bOverrideMass": false,
+		"bEnableGravity": true,
+		"bUpdateKinematicFromSimulation": false,
+		"bAutoWeld": true,
+		"bStartAwake": true,
+		"bGenerateWakeEvents": false,
+		"bUpdateMassWhenScaleChanges": true
+	},
+	"onComponentHit": "()",
+	"onComponentBeginOverlap": "()",
+	"onComponentEndOverlap": "()",
+	"onComponentWake": "()",
+	"onComponentSleep": "()",
+	"onComponentPhysicsStateChanged": "()",
+	"onBeginCursorOver": "()",
+	"onEndCursorOver": "()",
+	"onClicked": "()",
+	"onReleased": "()",
+	"onInputTouchBegin": "()",
+	"onInputTouchEnd": "()",
+	"onInputTouchEnter": "()",
+	"onInputTouchLeave": "()",
+	"rayTracingGroupCullingPriority": "CP_4_DEFAULT",
+	"customDepthStencilWriteMask": "ERSM_Default",
+	"excludeFromHLODLevels": 0,
+	"lODParentPrimitive": "None",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachSocketName": "None",
+	"relativeLocation":
+	{
+		"x": 0,
+		"y": 0,
+		"z": 0
+	},
+	"relativeRotation":
+	{
+		"pitch": 0,
+		"yaw": 0,
+		"roll": 0
+	},
+	"relativeScale3D":
+	{
+		"x": 1,
+		"y": 1,
+		"z": 1
 	},
 	"componentVelocity":
 	{
@@ -1334,7 +1892,7 @@
 		"bloomMethod": "BM_SOG",
 		"autoExposureMethod": "AEM_Histogram",
 		"temperatureType": "TEMP_WhiteBalance",
-		"whiteTemp": 6500,
+		"whiteTemp": 6284.134765625,
 		"whiteTint": 0,
 		"colorSaturation":
 		{
@@ -1622,10 +2180,10 @@
 		"autoExposureMeterMask": "None",
 		"autoExposureLowPercent": 10,
 		"autoExposureHighPercent": 90,
-		"autoExposureMinBrightness": -4.0579919815063477,
-		"autoExposureMaxBrightness": 2.6280055046081543,
-		"autoExposureSpeedUp": 3,
-		"autoExposureSpeedDown": 1,
+		"autoExposureMinBrightness": 0.21345853805541992,
+		"autoExposureMaxBrightness": 6.6970663070678711,
+		"autoExposureSpeedUp": 1.5,
+		"autoExposureSpeedDown": 0.80000001192092896,
 		"histogramLogMin": -10,
 		"histogramLogMax": 20,
 		"localExposureHighlightContrastScale": 1,
