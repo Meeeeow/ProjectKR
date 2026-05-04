@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "ProjectKR_ExportPropertyInterface.generated.h"
+#include "SeedExt_DebugPropertyInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE()
-class UProjectKR_ExportPropertyInterface : public UInterface
+class USeedExt_DebugPropertyInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,12 +16,15 @@ class UProjectKR_ExportPropertyInterface : public UInterface
 /**
  * 
  */
-class PROJECTKR_API IProjectKR_ExportPropertyInterface
+class SEEDEXT_CORE_API ISeedExt_DebugPropertyInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	void ExportProperty();
-	void ExportProperty(const FStringView& InSaveDirectory, const FStringView& InSaveName);
+	void ExportPropertyAdditiveObject(const TArray<UObject*>& InExportPropertyObject_List);
+
+	bool IsClassDefaultObject(const UObject* InObject) const;
+	bool ExportToJson(const UObject* InObject, FString& OutJsonString);
 };

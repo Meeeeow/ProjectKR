@@ -7,10 +7,12 @@
 
 #include "GameFramework/Actor.h"
 
+#include "SeedExt_Core/Interface/SeedExt_DebugPropertyInterface.h"
+
 #include "SeedExt_Sun.generated.h"
 
 UCLASS()
-class SEEDEXT_CORE_API ASeedExt_Sun : public AActor
+class SEEDEXT_CORE_API ASeedExt_Sun : public AActor, public ISeedExt_DebugPropertyInterface
 {
 	GENERATED_BODY()
 
@@ -88,6 +90,9 @@ protected:
 	/** 현재 바이옴 영향 파라미터 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
 	FSeedExt_InfluenceState CurrentBiomeInfluence;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="SeedExt|Info")
+	TArray<FSeedExt_InfluenceZone> InfluenceZone_List; 
 	
 public:
 	UFUNCTION(BlueprintCallable,Category="SeedExt|Events")

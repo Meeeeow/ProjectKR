@@ -6,8 +6,15 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AQamezik_002Easm_002Fl_003AC_0021_003FUsers_003Fwhitelilac96_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FNyzicyn_003FQamezik_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ASharedPointer_002Eh_002Fl_003A_002E_002E_003F_002E_002E_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E3_003FEngine_003FSource_003FRuntime_003FCore_003FPublic_003FTemplates_003FSharedPointer_002Eh/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003ATargetRules_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FProgram_0020Files_003FEpic_0020Games_003FUE_005F5_002E3_003FEngine_003FSource_003FPrograms_003FUnrealBuildTool_003FConfiguration_003FTargetRules_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AWehonad_002Easm_002Fl_003AC_0021_003FUsers_003Fwhitelilac96_003FAppData_003FLocal_003FTemp_003FSandboxFiles_003FDuhubac_003FWehonad_002Easm/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=CA511839_002DFCAC_002D3579_002DAA0A_002DE660853A1C27_002Fd_003ASelfTest_002Ff_003AGauntlet_002ESelfTest_002EGlobals_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=F5DD1D00_002D8727_002D3A6C_002DB1BA_002D686656545F49_002Fd_003ATests_002Ff_003AGauntlet_002ELowLevelTestNode_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/CustomBuildToolPath/@EntryValue">C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\amd64\MSBuild.exe</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/DotNetCliExePath/@EntryValue">C:\Program Files\Epic Games\UE_5.3\Engine\Binaries\ThirdParty\DotNet\6.0.302\windows\dotnet.exe</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=4942b219_002Dd2e6_002D4fc3_002Dbb28_002D813b748a846c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="솔루션의 모든 테스트" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=acc72eec_002Da065_002D4f43_002D929e_002Dd2024ef75bf6/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="솔루션의 모든 테스트 #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
 	</wpf:ResourceDictionary>

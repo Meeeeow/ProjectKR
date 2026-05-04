@@ -40,12 +40,12 @@ ASeedExt_Sun::ASeedExt_Sun()
 	SkyAtmosphereComponent = CreateDefaultSubobject<USkyAtmosphereComponent>(TEXT("SkyAtmosphere"));
 	SkyAtmosphereComponent->SetupAttachment(Root);
 	SkyAtmosphereComponent->RayleighScatteringScale = 1.0f;
-	SkyAtmosphereComponent->MieScatteringScale = 1.0f;
+	SkyAtmosphereComponent->MieScatteringScale = 0.1f;
  
 	// ExponentialHeightFog
 	ExponentialHeightFogComponent = CreateDefaultSubobject<UExponentialHeightFogComponent>(TEXT("HeightFog"));
 	ExponentialHeightFogComponent->SetupAttachment(Root);
-	ExponentialHeightFogComponent->FogDensity = 0.02f;
+	ExponentialHeightFogComponent->FogDensity = 0.008f;
 	ExponentialHeightFogComponent->FogHeightFalloff = 0.2f;
 	ExponentialHeightFogComponent->FogMaxOpacity = 0.9f;
  
@@ -95,6 +95,7 @@ void ASeedExt_Sun::Tick(float DeltaTime)
 	const bool bWasDayTime = CurrentSunState.IsDayTime();
 	ComputeSunState();
 	ApplyAtmosphereParams(ComputeAtmosphereParams());
+	ApplyPostProcessSettings();
 
 	const bool bIsDayTime = CurrentSunState.IsDayTime();
 	if(bWasDayTime != bIsDayTime)
@@ -124,6 +125,15 @@ void ASeedExt_Sun::PostEditChangeProperty(FPropertyChangedEvent& InEvent)
 	ComputeSunState();
 	ComputeBiomeInfluence();
 	ApplyAtmosphereParams(ComputeAtmosphereParams());
+
+	TArray<UObject*> ExportObject_List;
+	ExportObject_List.Add(DirectionalLightComponent);
+	ExportObject_List.Add(SkyLightComponent);
+	ExportObject_List.Add(SkyAtmosphereComponent);
+	ExportObject_List.Add(ExponentialHeightFogComponent);
+	ExportObject_List.Add(StaticMeshComponent);
+	ExportObject_List.Add(PostProcessComponent);
+	ExportPropertyAdditiveObject(ExportObject_List);
 }
 #endif
 
@@ -160,6 +170,26 @@ FSeedExt_InfluenceState ASeedExt_Sun::GetBiomeInfluenceStateAtLocation(const FVe
 		const float AltKm = InLocation.Z / 100000.f;
 		LocalState.TemperatureOffset -= AltKm * 0.16f;
 		LocalState.HumidityOffset -= FMath::Clamp(AltKm * 0.05f, 0.f, 0.3f);
+	}
+
+	if(InfluenceZone_List.IsEmpty() == false)
+	{
+		const FVector2D XY(InLocation.X, InLocation.Y);
+		for(const FSeedExt_InfluenceZone& InfluenceZone : InfluenceZone_List)
+		{
+			if(InfluenceZone.WorldRadius < KINDA_SMALL_NUMBER)
+				continue;
+
+			const float Distance = FVector2D::Distance(XY, InfluenceZone.WorldCenter);
+			if(Distance >= InfluenceZone.WorldRadius)
+				continue;
+
+			const float InnerRadius = InfluenceZone.WorldRadius * FMath::Clamp(InfluenceZone.FallOffFraction, 0.f, 1.f);
+			const float Weight = (Distance <= InnerRadius) ? 1.f : 1.f - (Distance - InnerRadius) / FMath::Max(InfluenceZone.WorldRadius, KINDA_SMALL_NUMBER);
+
+			LocalState.TemperatureOffset += InfluenceZone.TemperatureDelta * Weight;
+			LocalState.HumidityOffset += InfluenceZone.HumidityDelta * Weight;
+		}
 	}
 	
 	return LocalState;
@@ -420,34 +450,42 @@ FSeedExt_SunAtomsphereParams ASeedExt_Sun::ComputeAtmosphereParams() const
 	const FSeedExt_SunState& SunState = CurrentSunState;
 	FSeedExt_SunAtomsphereParams SunParams;
 
-	if(SunState.ElevationAngle <= 0.0f)
+	const bool bIsNight = (SunState.ElevationAngle <= 0.0f);
+
+	const float MoonPhase = FMath::Abs(FMath::Sin(DayTime * PI));
+	const float MoonlightFactor = MoonPhase * MoonlightIntensity;
+
+	if(bIsNight == true)
 	{
 		SunParams.SunLightColor = FLinearColor(0.05f, 0.07f, 0.15f);
-	}
-	else if(SunState.ElevationAngle < 15.f)
-	{
-		SunParams.SunLightColor = FLinearColor::LerpUsingHSV(SunriseColor, NoonColor, SunState.ElevationAngle / 15.f);
+		SunParams.SunLightIntensity = MoonlightFactor * 75000.f;
 	}
 	else
 	{
-		SunParams.SunLightColor = FLinearColor::LerpUsingHSV(NoonColor * 0.9f, NoonColor, FMath::Clamp((SunState.ElevationAngle - 15.f) / 75.f, 0.f, 1.f));
+		SunParams.SunLightIntensity = SunState.NormalizedIntensity * MaxSunlightLux;
+		
+		if(SunState.ElevationAngle < 15.f)
+			SunParams.SunLightColor = FLinearColor::LerpUsingHSV(SunriseColor, NoonColor, SunState.ElevationAngle / 15.f);
+		else
+			SunParams.SunLightColor = FLinearColor::LerpUsingHSV(NoonColor * 0.9f, NoonColor, FMath::Clamp((SunState.ElevationAngle - 15.f) / 75.f, 0.f, 1.f));
 	}
 
-	if(SunState.ElevationAngle <= 0.0f)
-	{
-		SunParams.SkyColor = FLinearColor(0.005f, 0.005f, 0.02f);
-	}
+	if(bIsNight == true)
+		SunParams.SkyColor = FLinearColor(0.01f, 0.01f, 0.04f);
 	else if(SunState.ElevationAngle < 10.0f)
-	{
 		SunParams.SkyColor = FLinearColor::LerpUsingHSV(FLinearColor(0.3f, 0.1f, 0.f), FLinearColor(0.05f, 0.15f, 0.5f), SunState.ElevationAngle / 10.f);
-	}
 	else
-	{
 		SunParams.SkyColor = FLinearColor(0.05f, 0.15f, 0.5f);
-	}
 
-	SunParams.FogDensity = FMath::Lerp(0.08f, 0.015f, FMath::Clamp(SunState.ElevationAngle / 30.f, 0.f, 1.f));
-	SunParams.SkyLightIntensity = FMath::Clamp(SunState.NormalizedIntensity * 2.0f, 0.05f, 2.f);
+	SunParams.FogDensity = FMath::Lerp(0.008f, 0.015f, FMath::Clamp(SunState.ElevationAngle / 30.f, 0.f, 1.f));
+
+	const float DaySkyLight = FMath::Clamp(SunState.NormalizedIntensity * 2.0f, 0.0f, 2.f);
+	const float NightSkyLight = FMath::Lerp(0.03f, 0.25f, MoonPhase);
+	
+	SunParams.SkyLightIntensity = ( bIsNight==true ) ? NightSkyLight : FMath::Max(DaySkyLight, 0.1f);
+
+	const float Clarity = CurrentBiomeInfluence.AtmosphericClarity;
+	SunParams.MieScatteringScale = FMath::Lerp(0.5f, 0.05f, Clarity);
 
 	return SunParams;
 }
@@ -462,15 +500,14 @@ void ASeedExt_Sun::ApplyAtmosphereParams(const FSeedExt_SunAtomsphereParams& InP
 	if(SkyLightComponent != nullptr)
 	{
 		SkyLightComponent->SetIntensity(InParams.SkyLightIntensity);
-		if(SkyLightComponent->bRealTimeCapture == false)
-		{
-			SkyLightComponent->RecaptureSky();
-		}
+		// if(SkyLightComponent->bRealTimeCapture == false)
+		// 	SkyLightComponent->RecaptureSky();
 	}
 
 	if(SkyAtmosphereComponent != nullptr)
 	{
 		SkyAtmosphereComponent->SetRayleighScatteringScale(InParams.RayleighScattering);
+		SkyAtmosphereComponent->SetMieScatteringScale(InParams.MieScatteringScale);
 	}
 
 	if(ExponentialHeightFogComponent != nullptr)
@@ -482,19 +519,37 @@ void ASeedExt_Sun::ApplyAtmosphereParams(const FSeedExt_SunAtomsphereParams& InP
 void ASeedExt_Sun::ApplyPostProcessSettings()
 {
 	if(PostProcessComponent == nullptr)
-	{
 		return;
-	}
 
 	FPostProcessSettings& PostProcessSettings = PostProcessComponent->Settings;
 
 	PostProcessSettings.bOverride_AutoExposureMethod = true;
 	PostProcessSettings.AutoExposureMethod = EAutoExposureMethod::AEM_Histogram;
 
+	const float NormalizedLux = FMath::Clamp(MaxSunlightLux / 75000.f, 0.01f, 1.f);
+	const bool bIsNight = (CurrentSunState.ElevationAngle <= 0.0f);
+	const float MoonPhase = FMath::Abs(FMath::Sin(DayTime * PI));
+
+	float ExposureMin = 0, ExposureMax = 0;
+	if(bIsNight == true)
+	{
+		ExposureMin = FMath::Lerp(-8.f, -2.f, MoonPhase);
+		ExposureMax = FMath::Lerp(0.f, 4.f, MoonPhase);
+
+		// PostProcessSettings.BloomIntensity = 0.675f;
+	}
+	else
+	{
+		ExposureMin = FMath::Lerp(4.f, 6.f, NormalizedLux);
+		ExposureMax = FMath::Lerp(10.f, 14.f, NormalizedLux);
+
+		// PostProcessSettings.BloomIntensity = 0.4f;
+	}
+
 	PostProcessSettings.bOverride_AutoExposureMinBrightness = true;
 	PostProcessSettings.bOverride_AutoExposureMaxBrightness = true;
-	PostProcessSettings.AutoExposureMinBrightness = -4.f;
-	PostProcessSettings.AutoExposureMaxBrightness = 16.f;
+	PostProcessSettings.AutoExposureMinBrightness = ExposureMin;
+	PostProcessSettings.AutoExposureMaxBrightness = ExposureMax;
 	
 	PostProcessSettings.bOverride_AutoExposureSpeedUp = true;
 	PostProcessSettings.bOverride_AutoExposureSpeedDown = true;
@@ -503,10 +558,10 @@ void ASeedExt_Sun::ApplyPostProcessSettings()
 	
 	PostProcessSettings.bOverride_FilmToe = false;
 	PostProcessSettings.bOverride_BloomIntensity = true;
-	PostProcessSettings.BloomIntensity = 0.675f;
 
 	PostProcessSettings.bOverride_WhiteTemp = true;
-	PostProcessSettings.WhiteTemp = FMath::Lerp(6500.f, CurrentSunState.ColorKelvinTemperature, 0.3f);
+	const float KelvinBlend = FMath::Clamp(CurrentSunState.ElevationAngle / 30.f, 0.f, 1.f) * 0.25f;
+	PostProcessSettings.WhiteTemp = FMath::Lerp(6500.f, CurrentSunState.ColorKelvinTemperature, KelvinBlend);
 }
 
 FLinearColor ASeedExt_Sun::ColorTemperatureToLinear(float InTemperature)

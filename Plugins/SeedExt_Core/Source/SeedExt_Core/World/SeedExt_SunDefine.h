@@ -84,6 +84,24 @@ struct FSeedExt_SunState
 	}
 };
 
+/** FSeedExt_InfluenceState의 영역을 결정하기 위한 파라미터 */
+USTRUCT(BlueprintType)
+struct FSeedExt_InfluenceZone
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Influence")
+	FVector2D WorldCenter = FVector2D::ZeroVector;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Influence",meta=(ClampMin=1.0))
+	float WorldRadius = 5000000.f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Influence",meta=(ClampMin=0.0,ClampMax=1.0))
+	float FallOffFraction = 0.6f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Influence",meta=(ClampMin="-1.0",ClampMax="1.0"))
+	float TemperatureDelta = 0.0f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Influence",meta=(ClampMin="-1.0",ClampMax="1.0"))
+	float HumidityDelta = 0.0f;
+};
+
 /** FSeedExt_SunState에서 파생된 바이옴을 결정하기 위한 파라미터 */
 USTRUCT(BlueprintType)
 struct FSeedExt_InfluenceState
@@ -150,6 +168,9 @@ struct FSeedExt_SunAtomsphereParams
 	/** 하늘 조명 강도 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Atmosphere")
 	float SkyLightIntensity = 1.0f;
+	/** Mie 산란 강도 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR|Atmosphere")
+	float MieScatteringScale = 0.1f;
 };
 
 class FSeedExt_InfluenceChangedDelegator : public FSeedExt_DelegateWrapper<FSeedExt_InfluenceChangedDelegate>

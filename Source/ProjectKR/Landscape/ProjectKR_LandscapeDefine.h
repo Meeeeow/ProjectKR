@@ -35,19 +35,21 @@ struct PROJECTKR_API FProjectKR_BiomeEnvironment
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
 	FName BiomeName = NAME_None;
 
-	// 기후 타겟
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin=0,ClampMax=1))
 	float Temperature = 0.5f;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin=0,ClampMax=1))
 	float Humidity = 0.5f;
 
-	// 고도 제한
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin=0.01f,ClampMax=1))
+	float TemperatureRange = 0.2f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR",meta=(ClampMin=0.01f,ClampMax=1))
+	float HumidityRange = 0.2f;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
 	float MinHeight = 0.0f;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
 	float MaxHeight = 1.0f;
 
-	// 지형 특성
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")
 	float HeightOffset = 0.0f;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="KR")

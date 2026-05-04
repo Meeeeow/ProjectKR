@@ -11,6 +11,7 @@
 #include "EditorModes.h"
 #include "EngineUtils.h"
 #include "FileHelpers.h"
+#include "InstancedFoliageActor.h"
 #include "LandscapeSubsystem.h"
 
 #include "AssetRegistry/AssetRegistryModule.h"
@@ -41,12 +42,15 @@ AProjectKR_LandscapeGenerator::AProjectKR_LandscapeGenerator()
 	TryToFindVariables();
 }
 
+#if WITH_EDITOR
 void AProjectKR_LandscapeGenerator::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
 	TryToFindVariables();
+	ExportProperty();
 }
+#endif
 
 FString AProjectKR_LandscapeGenerator::GetTextureFilePath() const
 {
@@ -117,7 +121,6 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 		const float NormalizedHeight = static_cast<float>(HeightPixel_List[Index].R) / 255.f;
 		const float HeightFloat = static_cast<float>(BaseHeight) + (NormalizedHeight * static_cast<float>(HeightAmplitude) * 2.f) - static_cast<float>(HeightAmplitude);
 		HeightData_List[Index] = static_cast<uint16>(FMath::Clamp(HeightFloat, 0.f, 65535.f));
-		
 	}
 
 	TMap<FName, TArray<uint8>> LandscapeData_List;
@@ -127,54 +130,73 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 		MapValue.SetNumZeroed(PixelCount);
 	}
 
-	TMap<EProjectKR_LandscapeBiomeType, float> BiomeCoverage_List;
-	for(const TPair<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>& Pair : LandscapeBiomeInfo_List)
+	ParallelFor(SizeY, [&](int32 Index_Y)
 	{
-		BiomeCoverage_List.Add(Pair.Key, 0.0f);
-	}
-
-	for(int32 Index_Y=0; Index_Y<SizeY; Index_Y++)
-	{
-		for(int32 Index_X=0; Index_X<SizeX; Index_X++)
+		FBiomeWeightInfo WeightBuffer[MaxBiomeNum];
+		for(int32 Index_X=0; Index_X<SizeX; ++Index_X)
 		{
 			const int32 Index = Index_Y * SizeX + Index_X;
-
 			const float NormalizedHeight = static_cast<float>(HeightPixel_List[Index].R) / 255.f;
 			const float Temperature = static_cast<float>(EnvironmentPixel_List[Index].R) / 255.f;
 			const float Humidity = static_cast<float>(EnvironmentPixel_List[Index].G) / 255.f;
 
-			TMap<FName, float> WeightsMap;
-			CalculateBiomeWeights(Temperature, Humidity, NormalizedHeight, WeightsMap);
-
-			if(WeightsMap.IsEmpty() == false)
+			const int32 WeightCount = CalculateBiomeWeightStack(Temperature, Humidity, NormalizedHeight, WeightBuffer, MaxBiomeNum);
+			for(int32 WeightIndex=0; WeightIndex<WeightCount; ++WeightIndex)
 			{
-				FName DominantName = NAME_None;
-				float DominantWeight = 1.0f;
-
-				for(const TPair<FName, float>& Pair : WeightsMap)
+				if(TArray<uint8>* LayerData = LandscapeData_List.Find(WeightBuffer[WeightIndex].BiomeName))
 				{
-					if(TArray<uint8>* LayerData = LandscapeData_List.Find(Pair.Key))
-					{
-						(*LayerData)[Index] = static_cast<uint8>(Pair.Value * 255.f);
-					}
-					if(Pair.Value > DominantWeight)
-					{
-						DominantWeight = Pair.Value;
-						DominantName = Pair.Key;
-					}
-				}
-
-				for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
-				{
-					if(It->Value.BiomeEnvironment.BiomeName == DominantName)
-					{
-						BiomeCoverage_List[It->Key] += 1.0f;
-						break;
-					}
+					(*LayerData)[Index] = static_cast<uint8>(WeightBuffer[WeightIndex].BiomeWeight * 255.f);
 				}
 			}
 		}
-	}
+	}, EParallelForFlags::Unbalanced);
+
+	// TMap<EProjectKR_LandscapeBiomeType, float> BiomeCoverage_List;
+	// for(const TPair<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>& Pair : LandscapeBiomeInfo_List)
+	// {
+	// 	BiomeCoverage_List.Add(Pair.Key, 0.0f);
+	// }
+	// for(int32 Index_Y=0; Index_Y<SizeY; Index_Y++)
+	// {
+	// 	for(int32 Index_X=0; Index_X<SizeX; Index_X++)
+	// 	{
+	// 		const int32 Index = Index_Y * SizeX + Index_X;
+	//
+	// 		const float NormalizedHeight = static_cast<float>(HeightPixel_List[Index].R) / 255.f;
+	// 		const float Temperature = static_cast<float>(EnvironmentPixel_List[Index].R) / 255.f;
+	// 		const float Humidity = static_cast<float>(EnvironmentPixel_List[Index].G) / 255.f;
+	//
+	// 		TMap<FName, float> WeightsMap;
+	// 		CalculateBiomeWeights(Temperature, Humidity, NormalizedHeight, WeightsMap);
+	//
+	// 		if(WeightsMap.IsEmpty() == false)
+	// 		{
+	// 			FName DominantName = NAME_None;
+	// 			float DominantWeight = 0.0f;
+	// 			for(const TPair<FName, float>& Pair : WeightsMap)
+	// 			{
+	// 				if(TArray<uint8>* LayerData = LandscapeData_List.Find(Pair.Key))
+	// 				{
+	// 					(*LayerData)[Index] = static_cast<uint8>(Pair.Value * 255.f);
+	// 				}
+	// 				if(Pair.Value > DominantWeight)
+	// 				{
+	// 					DominantWeight = Pair.Value;
+	// 					DominantName = Pair.Key;
+	// 				}
+	// 			}
+	// 		
+	// 			for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
+	// 			{
+	// 				if(It->Value.BiomeEnvironment.BiomeName == DominantName)
+	// 				{
+	// 					BiomeCoverage_List[It->Key] += 1.0f;
+	// 					break;
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 	
 	TMap<FGuid, TArray<uint16>> HeightData_Map;
 	HeightData_Map.Add(FGuid(), MoveTemp(HeightData_List));
@@ -191,13 +213,15 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 		if(LayerInfo == nullptr)
 			continue;
 
-		if(LayerInfo->LayerName == NAME_None)
+		if(LayerInfo->LayerName != It->Value.BiomeEnvironment.BiomeName)
 		{
 			LayerInfo->Modify();
 			LayerInfo->LayerName = It->Value.BiomeEnvironment.BiomeName;
+			LayerInfo->MarkPackageDirty();
 		}
 
 		FLandscapeImportLayerInfo ImportInfo;
+		ImportInfo.LayerName = It->Value.BiomeEnvironment.BiomeName;
 		ImportInfo.LayerInfo = LayerInfo;
 		ImportInfo.LayerData = LandscapeData_List[It->Value.BiomeEnvironment.BiomeName];
 		LandscapeLayerData_List.Add(ImportInfo);
@@ -214,11 +238,14 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 	ManagedLandscape->SetActorScale3D(FVector(100.0f));
 	ManagedLandscape->LandscapeMaterial = LandscapeMaterial;
 
+	const int32 HalfSizeX = (SizeX-1) / 2.f;
+	const int32 HalfSizeY = (SizeY-1) / 2.f;
+	
 	ManagedLandscape->Import(
 		FGuid::NewGuid(),
-		0, 0, SizeX-1, SizeY-1,
+		-HalfSizeX, -HalfSizeY, HalfSizeX, HalfSizeY,
 		SectionsPerComponent,
-		QuadsPerComponent,
+		QuadsPerSection,
 		HeightData_Map,
 		nullptr,
 		MaterialLayerDataPerLayers,
@@ -226,8 +253,8 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 		nullptr
 	);
 
-	ULandscapeInfo* LandscapeInfo = ManagedLandscape->GetLandscapeInfo();
-	if(LandscapeInfo != nullptr)
+	ULandscapeInfo::RecreateLandscapeInfo(World, false);
+	if(ULandscapeInfo* LandscapeInfo = ManagedLandscape->GetLandscapeInfo())
 	{
 		if(ULandscapeSubsystem* LandscapeSubsystem = World->GetSubsystem<ULandscapeSubsystem>())
 		{
@@ -239,7 +266,7 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 		ManagedLandscape->SetActorLabel(LandscapeName.ToString());
 	}
 
-	auto SetupRVTVolume = [&](TWeakObjectPtr<class ARuntimeVirtualTextureVolume> InVolume, TObjectPtr<class URuntimeVirtualTexture> InTexture)
+	auto SetupRVTVolume = [&](TWeakObjectPtr<ARuntimeVirtualTextureVolume> InVolume, TObjectPtr<URuntimeVirtualTexture> InTexture)
 	{
 		if(InVolume.IsValid() == false || InTexture == nullptr)
 			return;
@@ -249,8 +276,8 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 		FBox SphereBound = ManagedLandscape->GetComponentsBoundingBox();
 		FVector Center, Extents;
 		SphereBound.GetCenterAndExtents(Center, Extents);
-		ManagedHeightVolume->SetActorLocation(Center);
-		ManagedHeightVolume->SetActorScale3D(Extents/50.0f);
+		InVolume->SetActorLocation(Center);
+		InVolume->SetActorScale3D(Extents/50.0f);
 
 		ManagedLandscape->RuntimeVirtualTextures.AddUnique(InTexture);
 	};
@@ -261,39 +288,36 @@ void AProjectKR_LandscapeGenerator::TryToGenerateLandscape()
 void AProjectKR_LandscapeGenerator::CalculateBiomeWeights(const float InTemperature, const float InHumidity, const float InNormalizedHeight, TMap<FName, float>& OutWeightsMap) const
 {
 	OutWeightsMap.Empty();
+	constexpr float GaussianKernel = 2.0f;
 	float TotalWeight = 0.0f;
 
 	for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
 	{
-		const FProjectKR_BiomeEnvironment& Env = It->Value.BiomeEnvironment;
+		const FProjectKR_BiomeEnvironment& Environment = It->Value.BiomeEnvironment;
+		
+		const float HeightCenter = (Environment.MinHeight + Environment.MaxHeight) * 0.5f + Environment.HeightOffset;
+		const float HeightHalfRange = (Environment.MaxHeight - Environment.MinHeight) * 0.5f;
+        
+		if(HeightHalfRange < KINDA_SMALL_NUMBER)
+			continue;
+		
+		const float HeightSigma = HeightHalfRange * FMath::Max(Environment.HeightMultiplier, 0.1f);
+		const float HeightNormal = (InNormalizedHeight - HeightCenter) / HeightSigma;
 
-		// 기후 적합도: 픽셀의 T+H와 이 바이옴의 목표 T+H 사이의 거리를 선형 감쇠합니다.
-		// 거리가 0 → ClimateFit=1.0 (완벽한 일치), 거리가 0.5 이상 → ClimateFit=0.0
-		const float ClimateDist = FVector2D::Distance(
-			FVector2D(InTemperature, InHumidity),
-			FVector2D(Env.Temperature, Env.Humidity));
-		const float ClimateFit = FMath::Max(0.0f, 1.0f - (ClimateDist * 2.0f));
+		const float TemperatureNormal = (InTemperature - Environment.Temperature) / FMath::Max(Environment.TemperatureRange, KINDA_SMALL_NUMBER);
+		const float HumidityNormal = (InHumidity - Environment.Humidity) / FMath::Max(Environment.HumidityRange, KINDA_SMALL_NUMBER);
 
-		// 고도 적합도: 가우시안으로 범위 중앙에서 멀수록 부드럽게 0으로 감소합니다.
-		// 선형 step 대신 가우시안을 쓰는 이유: 바이옴 경계가 딱 끊기지 않고 서서히 전환됩니다.
-		float HeightFit = 0.0f;
-		if(InNormalizedHeight >= Env.MinHeight && InNormalizedHeight <= Env.MaxHeight)
-		{
-			const float Center = (Env.MinHeight + Env.MaxHeight) * 0.5f;
-			const float Range  = (Env.MaxHeight - Env.MinHeight) * 0.5f;
-			HeightFit = (Range > 0.0f) ? FMath::Exp(-FMath::Square(InNormalizedHeight - Center) / FMath::Square(Range)) : 1.0f;
-		}
+		const float NormalizedDistanceSqrt = (TemperatureNormal * TemperatureNormal) + (HumidityNormal * HumidityNormal) + (HeightNormal * HeightNormal);
+		const float Weight = FMath::Exp(-NormalizedDistanceSqrt * GaussianKernel);
+		
+		if(Weight < KINDA_SMALL_NUMBER)
+			continue;
 
-		// 최종 가중치 = 기후 × 고도. 둘 다 충족해야 배치됩니다.
-		// 0.01 미만은 의미 없는 값으로 처리 (uint8 캐스트 시 어차피 0~2 수준).
-		if(const float FinalWeight = ClimateFit * HeightFit; FinalWeight > 0.01f)
-		{
-			OutWeightsMap.Emplace(Env.BiomeName, FinalWeight);
-			TotalWeight += FinalWeight;
-		}
+		OutWeightsMap.Add(Environment.BiomeName, Weight);
+		TotalWeight += Weight;
 	}
 
-	if(TotalWeight > 0.0f)
+	if(TotalWeight > KINDA_SMALL_NUMBER)
 	{
 		for(TPair<FName, float>& Pair : OutWeightsMap)
 		{
@@ -301,31 +325,55 @@ void AProjectKR_LandscapeGenerator::CalculateBiomeWeights(const float InTemperat
 		}
 	}
 }
-bool AProjectKR_LandscapeGenerator::LoadHeightDataFromBakedTexture(TArray<uint16>& OutHeightData_List, int32 InExpectedSizeX, int32 InExpectedSizeY) const
+
+int32 AProjectKR_LandscapeGenerator::CalculateBiomeWeightStack(float InTemperature, float InHumidity, float InNormalizedHeight, AProjectKR_LandscapeGenerator::FBiomeWeightInfo* OutBuffer, int32 InBufferSize) const
 {
-	if(BakedHeightMap == nullptr)
-		return false;
+	int32 Count = 0;
+	float TotalWeight = 0.0f;
+	constexpr float GaussianKernel = 2.0f;
 
-	if(BakedHeightMap->GetSizeX() != InExpectedSizeX || BakedHeightMap->GetSizeY() != InExpectedSizeY)
-		return false;
-
-	TArray<FColor> Pixel_List;
-	if(LoadArrayFromTexture(BakedHeightMap, Pixel_List) == false)
-		return false;
-
-	const int32 PixelCount = InExpectedSizeX * InExpectedSizeY;
-	OutHeightData_List.SetNumUninitialized(PixelCount);
-
-	for(int32 Index=0; Index<PixelCount; ++Index)
+	for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
 	{
-		const float NormalizedHeight = static_cast<float>(Pixel_List[Index].R) / 255.f;
-		const float HeightFloat = static_cast<float>(BaseHeight) + (NormalizedHeight * static_cast<float>(HeightAmplitude) * 2.0f) - static_cast<float>(HeightAmplitude);
-		
-		OutHeightData_List[Index] = static_cast<uint16>(FMath::Clamp(HeightFloat, 0.0f, 65535.0f));
+		if(Count >= InBufferSize)
+			break;
+
+		const FProjectKR_BiomeEnvironment& Environment = It->Value.BiomeEnvironment;
+
+		const float HeightHalfRange = (Environment.MaxHeight - Environment.MinHeight) * 0.5f;
+		if(HeightHalfRange < KINDA_SMALL_NUMBER)
+			continue;
+
+		const float HeightCenter = (Environment.MinHeight + Environment.MaxHeight) * 0.5f + Environment.HeightOffset;
+		const float HeightSigma = HeightHalfRange * FMath::Max(Environment.HeightMultiplier, 0.1f);
+		const float HeightNormal = (InNormalizedHeight - HeightCenter) / HeightSigma;
+
+		const float TemperatureNormal = (InTemperature - Environment.Temperature) / FMath::Max(Environment.TemperatureRange, KINDA_SMALL_NUMBER);
+		const float HumidityNormal = (InHumidity - Environment.Humidity) / FMath::Max(Environment.HumidityRange, KINDA_SMALL_NUMBER);
+
+		const float DistanceSqrt = (TemperatureNormal*TemperatureNormal) + (HumidityNormal*HumidityNormal) + (HeightNormal*HeightNormal);
+
+		const float Weight = FMath::Exp(-DistanceSqrt * GaussianKernel);
+		if(Weight < KINDA_SMALL_NUMBER)
+			continue;
+
+		OutBuffer[Count].BiomeName = Environment.BiomeName;
+		OutBuffer[Count].BiomeType = It->Key;
+		OutBuffer[Count].BiomeWeight = Weight;
+		++Count;
+		TotalWeight += Weight;
 	}
 
-	return false;
+	if(TotalWeight > KINDA_SMALL_NUMBER)
+	{
+		for(int32 Index=0; Index<Count; ++Index)
+		{
+			OutBuffer[Index].BiomeWeight /= TotalWeight;
+		}
+	}
+	
+	return Count;
 }
+
 void AProjectKR_LandscapeGenerator::ClearManagedLandscape()
 {
 	if(ManagedLandscape.IsValid() == true && ManagedLandscape->GetWorld() == GetWorld())
@@ -367,7 +415,7 @@ void AProjectKR_LandscapeGenerator::TryToFindVariables()
 		}
 	}
 
-	auto FindOrSpawnRVTVolume = [&](TWeakObjectPtr<ARuntimeVirtualTextureVolume> InRVTVolume, const FName& InLabel)
+	auto FindOrSpawnRVTVolume = [&](TWeakObjectPtr<ARuntimeVirtualTextureVolume>& InRVTVolume, const FName& InLabel)
 	{
 		for(TActorIterator<ARuntimeVirtualTextureVolume> It(World); It; ++It)
 		{
@@ -376,12 +424,12 @@ void AProjectKR_LandscapeGenerator::TryToFindVariables()
 				InRVTVolume = *It;
 				return;
 			}
-
-			if(InRVTVolume == nullptr)
-			{
-				InRVTVolume = World->SpawnActor<ARuntimeVirtualTextureVolume>(ARuntimeVirtualTextureVolume::StaticClass(), GetActorLocation(), GetActorRotation());
-				InRVTVolume->SetActorLabel(InLabel.ToString());
-			}
+		}
+		
+		if(InRVTVolume == nullptr)
+		{
+			InRVTVolume = World->SpawnActor<ARuntimeVirtualTextureVolume>(ARuntimeVirtualTextureVolume::StaticClass(), GetActorLocation(), GetActorRotation());
+			InRVTVolume->SetActorLabel(InLabel.ToString());
 		}
 	};
 
@@ -398,6 +446,23 @@ void AProjectKR_LandscapeGenerator::TryToFindVariables()
 	}
 }
 
+void AProjectKR_LandscapeGenerator::TryToChangeLandscapeGridSize()
+{
+	UWorld* World = GetWorld();
+	if(World == nullptr)
+		return;
+
+	if(ManagedLandscape.IsValid() == false)
+		return;
+	
+	ULandscapeInfo::RecreateLandscapeInfo(World, false);
+
+	if(ULandscapeInfo* LandscapeInfo = ManagedLandscape->GetLandscapeInfo())
+	{
+		
+	}
+}
+
 void AProjectKR_LandscapeGenerator::BakeHeightMap()
 {
 	const int32 QuadsPerComponent = SectionsPerComponent * QuadsPerSection;
@@ -409,8 +474,27 @@ void AProjectKR_LandscapeGenerator::BakeHeightMap()
 	Pixel_List.SetNumZeroed(PixelCount);
 
 	int32 RidgeSeed = Seed + 300;
+	
+	// for(int32 Index_Y=0; Index_Y<SizeY; ++Index_Y)
+	// {
+	// 	for(int32 Index_X=0; Index_X<SizeX; Index_X++)
+	// 	{
+	// 		const float BaseNoise = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_X, Index_Y, MicroNoiseScale, Octaves, Persistence, Lacunarity, Seed);
+	// 		const float DetailNoise = UProjectKR_LandscapeFunctionLibrary::GetTerrainHeight(Index_X, Index_Y, MacroNoiseScale, 3, Persistence, Lacunarity, Seed + 5);
+	// 		const float RidgeNoise = UProjectKR_LandscapeFunctionLibrary::GetRidgedNoise(Index_X, Index_Y, MacroNoiseScale * 2.0f, 4, RidgeSeed);
+	//
+	// 		const float HeightMask = FMath::Clamp((BaseNoise + 0.2f) * 1.5f, 0.0f, 1.0f);
+	// 		
+	// 		const float CombinedNoise = FMath::Lerp(BaseNoise, RidgeNoise, HeightMask * 0.5f) + (DetailNoise * 0.1f);
+	//
+	// 		const float NormalizedNoise = FMath::Pow((CombinedNoise + 1.0f)*0.5f, RedistributionFactor);
+	//
+	// 		const uint8 HeightByte = static_cast<uint8>(FMath::Clamp(NormalizedNoise*255.0f, 0.0f, 255.0f));
+	// 		Pixel_List[Index_Y * SizeX + Index_X] = FColor(HeightByte, HeightByte, HeightByte, 255.f);
+	// 	}
+	// }
 
-	for(int32 Index_Y=0; Index_Y<SizeY; ++Index_Y)
+	ParallelFor(SizeY, [&](int32 Index_Y)
 	{
 		for(int32 Index_X=0; Index_X<SizeX; Index_X++)
 		{
@@ -427,6 +511,11 @@ void AProjectKR_LandscapeGenerator::BakeHeightMap()
 			const uint8 HeightByte = static_cast<uint8>(FMath::Clamp(NormalizedNoise*255.0f, 0.0f, 255.0f));
 			Pixel_List[Index_Y * SizeX + Index_X] = FColor(HeightByte, HeightByte, HeightByte, 255.f);
 		}
+	});
+
+	for(int32 SmoothIndex=0; SmoothIndex<HeightMapSmoothPassNum; ++SmoothIndex)
+	{
+		SmoothHeightMap(Pixel_List, SizeX, SizeY);
 	}
 
 	TArray<FAssetData> AssetData_List;
@@ -471,40 +560,37 @@ void AProjectKR_LandscapeGenerator::BakeEnvironmentMap()
 	EnvironmentPixel_List.SetNumUninitialized(PixelCount);
 
 	const bool bHasSun = (SunActor != nullptr);
-	
-	for(int32 Index_Y=0; Index_Y<SizeY; Index_Y++)
+
+	ParallelFor(SizeY, [&](int32 Index_Y)
 	{
-		for(int32 Index_X=0; Index_X<SizeX; Index_X++)
+		FBiomeWeightInfo WeightBuffer[MaxBiomeNum];
+		for(int32 Index_X=0; Index_X<SizeX; ++Index_X)
 		{
 			const int32 Index = Index_Y * SizeX + Index_X;
-
+			
 			const float NormalizedHeight = HeightPixel_List[Index].R / 255.f;
-
+			
 			float Temperature = UProjectKR_LandscapeFunctionLibrary::GetTemperatureAt(static_cast<float>(Index_X), static_cast<float>(Index_Y), Seed, ClimateNoiseScale);
 			float Humidity = UProjectKR_LandscapeFunctionLibrary::GetHumidityAt(static_cast<float>(Index_X), static_cast<float>(Index_Y), Seed, ClimateNoiseScale);
 
 			if(bHasSun == true)
 			{
 				const FVector2D WorldPosition2D = PixelToWorld(Index_X, Index_Y);
-				const FVector WorldPosition(WorldPosition2D.X, WorldPosition2D.Y, 0.0f);
-
-				const FSeedExt_InfluenceState InfluenceState = SunActor->GetBiomeInfluenceStateAtLocation(WorldPosition);
+				const FSeedExt_InfluenceState InfluenceState = SunActor->GetBiomeInfluenceStateAtLocation(FVector(WorldPosition2D.X, WorldPosition2D.Y, 0.f));
 				Temperature = InfluenceState.ApplyToTemperature(Temperature);
 				Humidity = InfluenceState.ApplyToHumidity(Humidity);
 			}
 
-			TMap<FName, float> WeightsMap;
-			CalculateBiomeWeights(Temperature, Humidity, NormalizedHeight, WeightsMap);
+			const int32 WeightCount = CalculateBiomeWeightStack(Temperature, Humidity, NormalizedHeight, WeightBuffer, MaxBiomeNum);
 
 			EProjectKR_LandscapeBiomeType DominantBiomeType = EProjectKR_LandscapeBiomeType::None;
-			float MaxWeight = -1.0f;
-			for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
+			float MaxWeight = -1.f;
+			for(int32 Index_Inner=0; Index_Inner<WeightCount; ++Index_Inner)
 			{
-				const FName& BName = It->Value.BiomeEnvironment.BiomeName;
-				if(const float* Weight = WeightsMap.Find(BName); Weight != nullptr && *Weight > MaxWeight)
+				if(WeightBuffer[Index_Inner].BiomeWeight > MaxWeight)
 				{
-					MaxWeight = *Weight;
-					DominantBiomeType = It->Key;
+					MaxWeight = WeightBuffer[Index_Inner].BiomeWeight;
+					DominantBiomeType = WeightBuffer[Index_Inner].BiomeType;
 				}
 			}
 
@@ -514,7 +600,51 @@ void AProjectKR_LandscapeGenerator::BakeEnvironmentMap()
 				static_cast<uint8>(DominantBiomeType),
 				255.f);
 		}
-	}
+	}, EParallelForFlags::Unbalanced);
+	
+	// for(int32 Index_Y=0; Index_Y<SizeY; Index_Y++)
+	// {
+	// 	for(int32 Index_X=0; Index_X<SizeX; Index_X++)
+	// 	{
+	// 		const int32 Index = Index_Y * SizeX + Index_X;
+	//
+	// 		const float NormalizedHeight = HeightPixel_List[Index].R / 255.f;
+	//
+	// 		float Temperature = UProjectKR_LandscapeFunctionLibrary::GetTemperatureAt(static_cast<float>(Index_X), static_cast<float>(Index_Y), Seed, ClimateNoiseScale);
+	// 		float Humidity = UProjectKR_LandscapeFunctionLibrary::GetHumidityAt(static_cast<float>(Index_X), static_cast<float>(Index_Y), Seed, ClimateNoiseScale);
+	//
+	// 		if(bHasSun == true)
+	// 		{
+	// 			const FVector2D WorldPosition2D = PixelToWorld(Index_X, Index_Y);
+	// 			const FVector WorldPosition(WorldPosition2D.X, WorldPosition2D.Y, 0.0f);
+	//
+	// 			const FSeedExt_InfluenceState InfluenceState = SunActor->GetBiomeInfluenceStateAtLocation(WorldPosition);
+	// 			Temperature = InfluenceState.ApplyToTemperature(Temperature);
+	// 			Humidity = InfluenceState.ApplyToHumidity(Humidity);
+	// 		}
+	//
+	// 		TMap<FName, float> WeightsMap;
+	// 		CalculateBiomeWeights(Temperature, Humidity, NormalizedHeight, WeightsMap);
+	//
+	// 		EProjectKR_LandscapeBiomeType DominantBiomeType = EProjectKR_LandscapeBiomeType::None;
+	// 		float MaxWeight = -1.0f;
+	// 		for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
+	// 		{
+	// 			const FName& BName = It->Value.BiomeEnvironment.BiomeName;
+	// 			if(const float* Weight = WeightsMap.Find(BName); Weight != nullptr && *Weight > MaxWeight)
+	// 			{
+	// 				MaxWeight = *Weight;
+	// 				DominantBiomeType = It->Key;
+	// 			}
+	// 		}
+	//
+	// 		EnvironmentPixel_List[Index] = FColor(
+	// 			static_cast<uint8>(FMath::Clamp(Temperature * 255.f, 0.0f, 255.f)),
+	// 			static_cast<uint8>(FMath::Clamp(Humidity * 255.f, 0.0f, 255.f)),
+	// 			static_cast<uint8>(DominantBiomeType),
+	// 			255.f);
+	// 	}
+	// }
 	
 	TArray<FAssetData> AssetData_List;
 	{
@@ -539,6 +669,164 @@ void AProjectKR_LandscapeGenerator::BakeEnvironmentMap()
 	}
 
 	BakedEnvironmentMap = SaveArrayToTexture(FString::Printf(TEXT("%s%d"), *Prefix, ++MaxIndex), SizeX, SizeY, EnvironmentPixel_List);
+}
+void AProjectKR_LandscapeGenerator::SpawnBiomeFoliage()
+{
+	UWorld* World = GetWorld();
+	if(World == nullptr)
+		return;
+
+	if(ManagedLandscape.IsValid() == false)
+		return;
+
+	if(BakedHeightMap == nullptr || BakedEnvironmentMap == nullptr)
+		return;
+
+	TArray<FColor> HeightPixel_List, EnvironmentPixel_List;
+	if(LoadArrayFromTexture(BakedHeightMap, HeightPixel_List) == false)
+		return;
+	if(LoadArrayFromTexture(BakedEnvironmentMap, EnvironmentPixel_List) == false)
+		return;
+
+	const int32 SizeX = BakedHeightMap->GetSizeX();
+	const int32 SizeY = BakedHeightMap->GetSizeY();
+	if(HeightPixel_List.Num() != SizeX * SizeY)
+		return;
+
+	DespawnBiomeFoliage();
+
+	AInstancedFoliageActor* InstancedFoliageActor = AInstancedFoliageActor::GetInstancedFoliageActorForCurrentLevel(World, true);
+	if(InstancedFoliageActor == nullptr)
+		return;
+
+	FRandomStream RandomStream(FoliageSeed);
+
+	const float HeightRangeCM = static_cast<float>(HeightAmplitude) * 2.0f/ 256.0f * 100.f;
+	constexpr float PixelSpaceCM = 100.f;
+	const float HeightScale = HeightRangeCM / (PixelSpaceCM * 255.0f);
+
+	auto GetNormalHeight = [&](int32 X, int32 Y)
+	{
+		X = FMath::Clamp(X, 0, SizeX - 1);
+		Y = FMath::Clamp(Y, 0, SizeY - 1);
+		return static_cast<float>(HeightPixel_List[Y * SizeX + X].R) / 255.f;
+	};
+
+	for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
+	{
+		const FProjectKR_BiomeInfo& BiomeInfo = It->Value;
+
+		for(const FProjectKR_BiomeFoliageEntry& FoliageEntry : BiomeInfo.FoliageEntry_List)
+		{
+			if(FoliageEntry.FoliageInstancedStaticMesh.IsNull() == true)
+				continue;
+
+			UFoliageType_InstancedStaticMesh* FoliageMesh = FoliageEntry.FoliageInstancedStaticMesh.LoadSynchronous();
+			if(FoliageMesh == nullptr)
+				continue;
+
+			const float PixelsPerInstance = 10000.0f / FMath::Max(FoliageEntry.Density, 0.001f);
+			const float StepPixel = FMath::Sqrt(PixelsPerInstance);
+
+			TArray<FFoliageInstance> FoliageInstance_List;
+			FoliageInstance_List.Reserve(static_cast<int32>(static_cast<float>(SizeX * SizeY) / PixelsPerInstance * 1.2f));
+			for(float SampleY=0.f; SampleY<static_cast<float>(SizeY); SampleY+=StepPixel)
+			{
+				for(float SampleX=0.f; SampleX<static_cast<float>(SizeX); SampleX+=StepPixel)
+				{
+					const float JitterX = RandomStream.FRandRange(-StepPixel * 0.5f, StepPixel * 0.5f);
+					const float JitterY = RandomStream.FRandRange(-StepPixel * 0.5f, StepPixel * 0.5f);
+
+					const float PixelX = FMath::Clamp(static_cast<int32>(SampleX + JitterX), 0, SizeX - 1);
+					const float PixelY = FMath::Clamp(static_cast<int32>(SampleY + JitterY), 0, SizeY - 1);
+					
+					const int32 Index = PixelY * SizeX + PixelX;
+
+					const float NormalizedHeight = GetNormalHeight(PixelX, PixelY);
+					if(NormalizedHeight < FoliageEntry.MinNormalizedHeight || NormalizedHeight > FoliageEntry.MaxNormalizedHeight)
+						continue;
+
+					const float SlopeX = (GetNormalHeight(PixelX+1, PixelY) - GetNormalHeight(PixelX-1, PixelY)) * 0.5f;
+					const float SlopeY = (GetNormalHeight(PixelX, PixelY+1) - GetNormalHeight(PixelX, PixelY-1)) * 0.5f;
+
+					const float SlopeDegree = FMath::RadiansToDegrees(FMath::Atan(FMath::Sqrt(SlopeX*SlopeX + SlopeY*SlopeY) * HeightScale));
+					if(SlopeDegree > FoliageEntry.MaxSlopeDegrees)
+						continue;
+
+					const float Temperature = static_cast<float>(EnvironmentPixel_List[Index].R) / 255.0f;
+					const float Humidity = static_cast<float>(EnvironmentPixel_List[Index].G) / 255.0f;
+					TMap<FName, float> WeightMap;
+					CalculateBiomeWeights(Temperature, Humidity, NormalizedHeight, WeightMap);
+
+					const FName& BiomeName = BiomeInfo.BiomeEnvironment.BiomeName;
+					const float* BiomeWeight = WeightMap.Find(BiomeName);
+					if(BiomeWeight == nullptr || *BiomeWeight < FoliageEntry.MinBiomeWeight)
+						continue;
+
+					const FVector2D WorldXY = PixelToWorld(PixelX, PixelY);
+					FHitResult HitResult;
+					if(World->LineTraceSingleByChannel(HitResult,FVector(WorldXY.X, WorldXY.Y,  500000.0f),FVector(WorldXY.X, WorldXY.Y, -500000.0f), ECC_WorldStatic) == false)
+						continue;
+
+					const float FoliageScale = RandomStream.FRandRange(FoliageEntry.ScaleRange.X, FoliageEntry.ScaleRange.Y);
+					FFoliageInstance Inst;
+					Inst.Location = HitResult.Location;
+					Inst.Rotation = FRotator(0.0f, RandomStream.FRandRange(0.0f, 360.0f), 0.0f);
+					Inst.DrawScale3D = FVector3f(FoliageScale);
+					FoliageInstance_List.Add(Inst);
+				}
+			}
+
+			if(FoliageInstance_List.Num() > 0)
+			{
+				FFoliageInfo* FoliageInfo = InstancedFoliageActor->FindOrAddMesh(FoliageEntry.FoliageInstancedStaticMesh.Get());
+				if(FoliageInfo != nullptr)
+				{
+					TArray<const FFoliageInstance*> FoliageInstancePtr_List;
+					FoliageInstancePtr_List.Reserve(FoliageInstance_List.Num());
+					for(const FFoliageInstance& FoliageInstance : FoliageInstance_List)
+					{
+						FoliageInstancePtr_List.Add(&FoliageInstance);
+					}
+					FoliageInfo->AddInstances(FoliageEntry.FoliageInstancedStaticMesh.Get(), FoliageInstancePtr_List);
+				}
+			}
+		}
+	}
+}
+void AProjectKR_LandscapeGenerator::DespawnBiomeFoliage()
+{
+	UWorld* World = GetWorld();
+	if(World == nullptr)
+		return;
+
+	AInstancedFoliageActor* InstancedFoliageActor = AInstancedFoliageActor::GetInstancedFoliageActorForCurrentLevel(World, false);
+	if(InstancedFoliageActor == nullptr)
+		return;
+
+	for(TMap<EProjectKR_LandscapeBiomeType, FProjectKR_BiomeInfo>::TConstIterator It(LandscapeBiomeInfo_List); It; ++It)
+	{
+		for(const FProjectKR_BiomeFoliageEntry& FoliageEntry : It->Value.FoliageEntry_List)
+		{
+			if(FoliageEntry.FoliageInstancedStaticMesh.IsNull() == true)
+				continue;
+			
+			UFoliageType_InstancedStaticMesh* FoliageInstancedMesh = FoliageEntry.FoliageInstancedStaticMesh.Get();
+			if(FoliageInstancedMesh == nullptr)
+				continue;
+
+			if(FFoliageInfo* FoliageInfo = InstancedFoliageActor->FindInfo(FoliageInstancedMesh))
+			{
+				TArray<int32> Indices_List;
+				Indices_List.Reserve(FoliageInfo->Instances.Num());
+				for(int32 Index=0; Index<FoliageInfo->Instances.Num(); ++Index)
+				{
+					Indices_List.Add(Index);
+				}
+				FoliageInfo->RemoveInstances(Indices_List, true);
+			}
+		}
+	}
 }
 
 UTexture2D* AProjectKR_LandscapeGenerator::SaveArrayToTexture(const FString& InAssetName, int32 InSizeX, int32 InSizeY, const TArray<FColor>& InPixel_List)
@@ -580,7 +868,7 @@ UTexture2D* AProjectKR_LandscapeGenerator::SaveArrayToTexture(const FString& InA
 		
 		Texture->Source.Init(InSizeX, InSizeY, 1, 1, ETextureSourceFormat::TSF_BGRA8, reinterpret_cast<const uint8*>(InPixel_List.GetData()));
 
-		Texture->SRGB = true;
+		Texture->SRGB = false;
 		Texture->CompressionSettings = TextureCompressionSettings::TC_Default;
 		Texture->UpdateResource();
 		Texture->PostEditChange();
@@ -652,6 +940,84 @@ void AProjectKR_LandscapeGenerator::BroadcastNotification(const FString& InNotif
 	TSharedPtr<SNotificationItem> Item = FSlateNotificationManager::Get().AddNotification(NotificationInfo);
 
 	Item->SetCompletionState(SNotificationItem::CS_Fail);
+}
+
+void AProjectKR_LandscapeGenerator::SmoothHeightMap(TArray<FColor>& InOutPixel_List, int32 InSizeX, int32 InSizeY) const
+{
+	static const int32 GaussianBlur_List[5] = { 1, 4, 6, 4, 1 };
+	static constexpr int32 GaussianBlurSum = 16;
+	static constexpr int32 GaussianBlurRadius = 2;
+
+	const int32 PixelCount = InSizeX * InSizeY;
+
+	TArray<uint8> HorizontalBlurResult_List;
+	HorizontalBlurResult_List.SetNumUninitialized(PixelCount);
+
+	// for(int32 Index_Y=0; Index_Y<InSizeY; ++Index_Y)
+	// {
+	// 	for(int32 Index_X=0; Index_X<InSizeX; ++Index_X)
+	// 	{
+	// 		int32 Accumulate = 0;
+	// 		for(int32 BlurOffset=-GaussianBlurRadius; BlurOffset<=GaussianBlurRadius; ++BlurOffset)
+	// 		{
+	// 			const int32 SampledX = FMath::Clamp(Index_X + BlurOffset, 0, InSizeX - 1);
+	// 			const int32 BlurWeight = GaussianBlur_List[BlurOffset + GaussianBlurRadius];
+	// 			Accumulate += static_cast<int32>(InOutPixel_List[Index_Y * InSizeX + SampledX].R) * BlurWeight;
+	// 		}
+	//
+	// 		HorizontalBlurResult_List[Index_Y * InSizeX + Index_X] = static_cast<uint8>(Accumulate / GaussianBlurSum);
+	// 	}
+	// }
+	
+	// for(int32 Index_Y=0; Index_Y<InSizeY; ++Index_Y)
+	// {
+	// 	for(int32 Index_X=0; Index_X<InSizeX; ++Index_X)
+	// 	{
+	// 		int32 Accumulate = 0;
+	// 		for(int32 BlurOffset=-GaussianBlurRadius; BlurOffset<=GaussianBlurRadius; ++BlurOffset)
+	// 		{
+	// 			const int32 SampledY = FMath::Clamp(Index_Y + BlurOffset, 0, InSizeY - 1);
+	// 			const int32 BlurWeight = GaussianBlur_List[BlurOffset + GaussianBlurRadius];
+	// 			Accumulate += static_cast<int32>(HorizontalBlurResult_List[SampledY * InSizeX + Index_X]) * BlurWeight;
+	// 		}
+	//
+	// 		const uint8 BlurredHeight = static_cast<uint8>(Accumulate / GaussianBlurSum);
+	// 		InOutPixel_List[Index_Y * InSizeX + Index_X] = FColor(BlurredHeight, BlurredHeight, BlurredHeight, 255);
+	// 	}
+	// }
+
+	ParallelFor(InSizeY, [&](int32 Index_Y)
+	{
+		for(int32 Index_X=0; Index_X<InSizeX; ++Index_X)
+		{
+			int32 Accumulate = 0;
+			for(int32 BlurOffset=-GaussianBlurRadius; BlurOffset<=GaussianBlurRadius; ++BlurOffset)
+			{
+				const int32 SampledX = FMath::Clamp(Index_X + BlurOffset, 0, InSizeX - 1);
+				const int32 BlurWeight = GaussianBlur_List[BlurOffset + GaussianBlurRadius];
+				Accumulate += static_cast<int32>(InOutPixel_List[Index_Y * InSizeX + SampledX].R) * BlurWeight;
+			}
+	
+			HorizontalBlurResult_List[Index_Y * InSizeX + Index_X] = static_cast<uint8>(Accumulate / GaussianBlurSum);
+		}
+	});
+
+	ParallelFor(InSizeY, [&](int32 Index_Y)
+	{
+		for(int32 Index_X=0; Index_X<InSizeX; ++Index_X)
+		{
+			int32 Accumulate = 0;
+			for(int32 BlurOffset=-GaussianBlurRadius; BlurOffset<=GaussianBlurRadius; ++BlurOffset)
+			{
+				const int32 SampledY = FMath::Clamp(Index_Y + BlurOffset, 0, InSizeY - 1);
+				const int32 BlurWeight = GaussianBlur_List[BlurOffset + GaussianBlurRadius];
+				Accumulate += static_cast<int32>(HorizontalBlurResult_List[SampledY * InSizeX + Index_X]) * BlurWeight;
+			}
+
+			const uint8 BlurredHeight = static_cast<uint8>(Accumulate / GaussianBlurSum);
+			InOutPixel_List[Index_Y * InSizeX + Index_X] = FColor(BlurredHeight, BlurredHeight, BlurredHeight, 255);
+		}
+	});
 }
 
 EProjectKR_LandscapeBiomeType AProjectKR_LandscapeGenerator::FindDominantBiome(const TMap<EProjectKR_LandscapeBiomeType, float>& InWeightMap)

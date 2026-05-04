@@ -100,3 +100,9 @@ template<typename T> T* SeedExt_HexStringToPointer(const FString& InHexString)
 	return nullptr;
 #endif
 }
+
+template<typename T>
+T* SeedExt_GetSafeMapValue(T** InAdress)
+{
+	return (InAdress != nullptr) ? *InAdress : nullptr;
+}

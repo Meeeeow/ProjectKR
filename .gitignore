@@ -75,6 +75,7 @@ DerivedDataCache/*
 
 # custom
 .Cowork/
+.claude/
 .gemini/
 .idea/
 RunGemini.bat

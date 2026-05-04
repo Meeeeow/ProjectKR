@@ -15,11 +15,15 @@ enum class EProjectKR_LandscapeBiomeType : uint8
 {
 	None = 0,
 	Dirt,
-	GrassA,
+	Grass,
 	Rock,
-	SandA,
-	SandB,
+	Sand,
 	Snow,
+	Alpine,
+	ConiferForest,
+	DeciduousForest,
+	DryGrassland,
+	Wetland,
 	Num			UMETA(Hidden),
 };
 
