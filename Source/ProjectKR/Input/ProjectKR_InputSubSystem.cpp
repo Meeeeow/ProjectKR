@@ -51,7 +51,7 @@ void UProjectKR_InputSubSystem::InitEnhancedInput()
 }
 void UProjectKR_InputSubSystem::ResetEnhancedInput()
 {
-
+	
 }
 
 UClass* UProjectKR_InputSubSystem::GetSubSystemClass()

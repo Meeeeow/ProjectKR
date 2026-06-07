@@ -74,9 +74,14 @@ Plugins/**/Intermediate/*
 DerivedDataCache/*
 
 # custom
+Content/
 .Cowork/
 .claude/
 .gemini/
 .idea/
 RunGemini.bat
 *.uasset
+*.fbx
+*.jpg
+*.mb
+*.txt

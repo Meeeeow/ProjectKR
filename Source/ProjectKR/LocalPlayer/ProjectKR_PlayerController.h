@@ -18,10 +18,18 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+	void OnCharacterSpawnComplete(struct FSeedExt_CharacterHandle InCharacterHandle, FSoftObjectPath InCharacterPath);
+	void OnCharacterSpawnFail(struct FSeedExt_CharacterHandle InCharacterHandle, FSoftObjectPath InCharacterPath);
+	
 public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	class AProjectKR_PlayerCharacterInstance* GetPlayerCharacterInstance();
+
+	UFUNCTION(Client,Reliable)
+	void ClientRPC_OnPlayerReadyComplete(const FSoftObjectPath& InCharacterPath);
+	UFUNCTION(Server,Reliable)
+	void Server_RequestSpawn(const FSoftObjectPath& InCharacterPath);
 
 protected:
 	void BindInputEvent();
@@ -30,4 +38,16 @@ protected:
 	UFUNCTION() void OnHandleInputMove(const struct FInputActionValue& InInputActionValue);
 	UFUNCTION() void OnHandleInputLook(const struct FInputActionValue& InInputActionValue);
 	UFUNCTION() void OnHandleInputJump(const struct FInputActionValue& InInputActionValue);
+
+private:
+	void BindInputAction(class UEnhancedInputComponent* InEnhancedInputComponent);
+	void UnbindInputAction();
+
+	void Input_Move(const struct FInputActionValue& InInputActionValue);
+	void Input_Look(const struct FInputActionValue& InInputActionValue);
+	void Input_JumpStart(const struct FInputActionValue& InInputActionValue);
+	void Input_JumpComplete(const struct FInputActionValue& InInputActionValue);
+
+	void Input_AbilityInputTagPressed(struct FGameplayTag InGameplayTag);
+	void Input_AbilityInputTagReleased(struct FGameplayTag InGameplayTag);
 };

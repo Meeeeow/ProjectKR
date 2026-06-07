@@ -8,8 +8,8 @@
 
 #include "SeedExt_ActorManager.generated.h"
 
-#define SeedExt_GetActorManager(World) FSeedExt_SubSystemCollector::_GetSubSystem<UProjectKR_ActorManager>(World)
-#define SeedExt_HasActorManager(World) FSeedExt_SubSystemCollector::_HasSubSystem<UProjectKR_ActorManager>(World)
+#define SeedExt_GetActorManager(World) FSeedExt_SubSystemCollector::_GetSubSystem<USeedExt_ActorManager>(World)
+#define SeedExt_HasActorManager(World) FSeedExt_SubSystemCollector::_HasSubSystem<USeedExt_ActorManager>(World)
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,7 +22,7 @@ struct SEEDEXT_CORE_API FSeedExt_ActorSpawnRequestInfo
 {
 	FVector SpawnLocation = FVector::ZeroVector;
 	FRotator SpawnRotation = FRotator::ZeroRotator;
-	FVector SpawnScale = FVector::ZeroVector;
+	FVector SpawnScale = FVector::OneVector;
 	bool bIsHideSpawn = false;
 	
 	FSeedExt_CharacterSpawnCompleteDelegate::FDelegate* SpawnCompleteDelegate = nullptr;
@@ -38,7 +38,7 @@ private:
 	FSeedExt_CharacterHandle CharacterHandle = FSeedExt_CharacterHandle();
 	FVector SpawnLocation = FVector::ZeroVector;
 	FRotator SpawnRotation = FRotator::ZeroRotator;
-	FVector SpawnScale = FVector::ZeroVector;
+	FVector SpawnScale = FVector::OneVector;
 	bool bIsHideSpawn = false;
 	
 	FSeedExt_CharacterSpawnCompleteDelegate::FDelegate SpawnCompleteDelegate;
@@ -59,9 +59,17 @@ public:
 	FSeedExt_CharacterHandle SpawnCharacter(const FSoftObjectPath& InSoftObjectPath, const FSeedExt_ActorSpawnRequestInfo& InRequestInfo);
 	void DespawnCharacter(const FSeedExt_CharacterHandle& InCharacterHandle);
 
+	class ASeedExt_CharacterInstance* GetCharacterInstance(const FSeedExt_CharacterHandle& InCharacterHandle);
+
 private:
 	TMap<FSeedExt_CharacterHandle, FSeedExt_ActorSpawnStatus> CharacterSpawnStatus_List;
 	TMap<FSeedExt_CharacterHandle, TObjectPtr<class ASeedExt_CharacterInstance>> CharacterInstance_List;
 
 	virtual int32 GetSubSystemOrder() override { return static_cast<int32>(ESeedExt_SubSystemOrderType::Normal)-1; }
+
+protected:
+	void OnLoadCharacterComplete(FSoftObjectPath InSoftObjectPath, UObject* InObject, UClass* InClass, FSeedExt_CharacterHandle InCharacterHandle);
+	void OnLoadCharacterFail(FSoftObjectPath InSoftObjectPath, FSeedExt_CharacterHandle InCharacterHandle);
+
+	class ASeedExt_CharacterInstance* SpawnCharacterActorInternal(UClass* InCharacterClass, const FSeedExt_ActorSpawnStatus& InActorSpawnStatus);
 };

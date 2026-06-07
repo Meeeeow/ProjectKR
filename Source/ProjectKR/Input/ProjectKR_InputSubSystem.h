@@ -51,8 +51,8 @@ public:
 	const FProjectKR_InputSource* GetPlayingInputConfigSource() const;
 
 private:
-	UPROPERTY(Transient) TWeakObjectPtr<class APlayerController> PlayerController = nullptr;
-	UPROPERTY(Transient) TObjectPtr<UProjectKR_InputConfig> InputConfig = nullptr;
+	UPROPERTY() TWeakObjectPtr<class APlayerController> PlayerController = nullptr;
+	UPROPERTY() TObjectPtr<UProjectKR_InputConfig> InputConfig = nullptr;
 
 	FName PlayingContextName = NAME_None;
 

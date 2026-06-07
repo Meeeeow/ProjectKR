@@ -2,46 +2,42 @@
 
 #include "SeedExt_CharacterInstance.h"
 
-// Sets default values
 ASeedExt_CharacterInstance::ASeedExt_CharacterInstance()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	if(HeadSkeletalMeshComponent == nullptr)
-	{
-		static FName HeadSkeletalMeshComponentName(TEXT("SeedExt_HeadSkeletalMeshComponent"));
-		HeadSkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(HeadSkeletalMeshComponentName);
-		HeadSkeletalMeshComponent->SetupAttachment(RootComponent);
-	}
-	
-	if(BodySkeletalMeshComponent == nullptr)
-	{
-		static FName BodySkeletalMeshComponentName(TEXT("SeedExt_BodySkeletalMeshComponent"));
-		BodySkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(BodySkeletalMeshComponentName);
-		BodySkeletalMeshComponent->SetupAttachment(RootComponent);
-	}
-	
 }
 
-// Called when the game starts or when spawned
 void ASeedExt_CharacterInstance::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if(HeadSkeletalMeshComponent != nullptr && BodySkeletalMeshComponent != nullptr)
-		HeadSkeletalMeshComponent->SetLeaderPoseComponent(BodySkeletalMeshComponent);
 }
 
-// Called every frame
 void ASeedExt_CharacterInstance::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-// Called to bind functionality to input
 void ASeedExt_CharacterInstance::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
+void ASeedExt_CharacterInstance::SetAnimation(FName InAlias, class UAnimSequence* InAnimSequence, ESeedExt_DirectionAnimType InDirectionAnimType)
+{
+	USkeletalMeshComponent* SkeletalMeshComponent = GetMesh();
+	if(SkeletalMeshComponent == nullptr)
+		return;
+
+	UAnimInstance* AnimInstance = SkeletalMeshComponent->GetAnimInstance();
+	if(AnimInstance == nullptr)
+		return;
+
+	if(USeedExt_AnimInstance* AnimInstance_Inner = Cast<USeedExt_AnimInstance>(AnimInstance))
+	{
+		if(InAlias == FName(TEXT("InputTag_Move")) == true)
+			AnimInstance_Inner->Anim_Walk.SetAnimation(InAnimSequence, InDirectionAnimType);
+		else if(InAlias == FName(TEXT("InputTag_Run")) == true)
+			AnimInstance_Inner->Anim_Run.SetAnimation(InAnimSequence, InDirectionAnimType);
+		else if(InAlias == FName(TEXT("InputTag_Idle")) == true)
+			AnimInstance_Inner->Anim_Idle = InAnimSequence;
+	}
+}

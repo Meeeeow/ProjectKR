@@ -1,15 +1,15 @@
 {
-	"sunDirectionalLightComponent": "/Script/Engine.DirectionalLightComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SunDirectionalLight'",
-	"moonDirectionalLightComponent": "/Script/Engine.DirectionalLightComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.MoonDirectionalLight'",
-	"skyLightComponent": "/Script/Engine.SkyLightComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SkyLight'",
-	"skyAtmosphereComponent": "/Script/Engine.SkyAtmosphereComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SkyAtmosphere'",
-	"exponentialHeightFogComponent": "/Script/Engine.ExponentialHeightFogComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.HeightFog'",
-	"sunStaticMeshComponent": "/Script/Engine.StaticMeshComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.SunStaticMesh'",
-	"moonStaticMeshComponent": "/Script/Engine.StaticMeshComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.MoonStaticMesh'",
-	"postProcessComponent": "/Script/Engine.PostProcessComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.PostProcess'",
+	"sunDirectionalLightComponent": "/Script/Engine.DirectionalLightComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.SunDirectionalLight'",
+	"moonDirectionalLightComponent": "/Script/Engine.DirectionalLightComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.MoonDirectionalLight'",
+	"skyLightComponent": "/Script/Engine.SkyLightComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.SkyLight'",
+	"skyAtmosphereComponent": "/Script/Engine.SkyAtmosphereComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.SkyAtmosphere'",
+	"exponentialHeightFogComponent": "/Script/Engine.ExponentialHeightFogComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.HeightFog'",
+	"sunStaticMeshComponent": "/Script/Engine.StaticMeshComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.SunStaticMesh'",
+	"moonStaticMeshComponent": "/Script/Engine.StaticMeshComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.MoonStaticMesh'",
+	"postProcessComponent": "/Script/Engine.PostProcessComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.PostProcess'",
 	"latitudeDegree": 46,
-	"dayTime": 0.27539458870887756,
-	"lunarCycle": 0.10000000149011612,
+	"dayTime": 0.40000000596046448,
+	"lunarCycle": 0.5,
 	"seasonCycle": 0.62679398059844971,
 	"dayTimeScale": 3000,
 	"seasonCycleScale": 0,
@@ -60,33 +60,33 @@
 	},
 	"currentSunState":
 	{
-		"elevationAngle": 10.528453826904297,
-		"azimuth": 92.523086547851562,
-		"normalizedIntensity": 0.027355484664440155,
-		"dayTime": 0.27539458870887756,
+		"elevationAngle": 39.199188232421875,
+		"azimuth": 131.01210021972656,
+		"normalizedIntensity": 0.35976654291152954,
+		"dayTime": 0.40000000596046448,
 		"seasonCycle": 0.62679398059844971,
 		"seasonType": "Autumn",
-		"colorKelvinTemperature": 4039.634033203125,
+		"colorKelvinTemperature": 5607.32373046875,
 		"dayLightFraction": 0.53365081548690796
 	},
 	"currentMoonState":
 	{
-		"elevationAngle": 44.2708740234375,
-		"azimuth": 143.67770385742188,
-		"moonPhase": 0.30901700258255005,
-		"lightIntensity": 185.41021728515625
+		"elevationAngle": -29.089284896850586,
+		"azimuth": 317.99746704101562,
+		"moonPhase": 1,
+		"lightIntensity": 60
 	},
 	"currentBiomeInfluence":
 	{
 		"temperatureOffset": 0.22450000047683716,
 		"temperatureMultiplier": 0.9302857518196106,
-		"diurnalAplitude": 0.25,
-		"humidityOffset": -0.25,
-		"humidityMultiplier": 0.5,
+		"diurnalAplitude": 0.10000000149011612,
+		"humidityOffset": 0.05000000074505806,
+		"humidityMultiplier": 0.89999997615814209,
 		"seasonalPrecipitation": 1.2000000476837158,
-		"latitudeBandType": "Polar",
+		"latitudeBandType": "Subpolar",
 		"seasonalWarmth": 0.85751605033874512,
-		"atmosphericClarity": 0.47018969058990479
+		"atmosphericClarity": 0.66132795810699463
 	},
 	"influenceZone_List": [
 		{
@@ -191,7 +191,7 @@
 	"netPriority": 1,
 	"physicsReplicationMode": "Default",
 	"instigator": "None",
-	"rootComponent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"rootComponent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"pivotOffset":
 	{
 		"x": 0,
@@ -355,13 +355,13 @@
 	"bUseRayTracedDistanceFieldShadows": true,
 	"rayStartOffsetDepthScale": 0.0030000000260770321,
 	"lightGuid": "00000000000000000000000000000000",
-	"intensity": 2051.661376953125,
+	"intensity": 26982.490234375,
 	"lightColor":
 	{
-		"b": 213,
-		"g": 232,
-		"r": 255,
-		"a": 255
+		"b": 236,
+		"g": 244,
+		"r": 247,
+		"a": 238
 	},
 	"bAffectsWorld": true,
 	"castShadows": true,
@@ -378,7 +378,7 @@
 	"indirectLightingIntensity": 1,
 	"volumetricScatteringIntensity": 1,
 	"samplesPerPixel": 1,
-	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"attachSocketName": "None",
 	"relativeLocation":
 	{
@@ -388,9 +388,9 @@
 	},
 	"relativeRotation":
 	{
-		"pitch": -10.528453826904302,
-		"yaw": -87.476913452148438,
-		"roll": 0
+		"pitch": -39.199188232421896,
+		"yaw": -48.987899780273466,
+		"roll": -2.0520940382005052e-15
 	},
 	"relativeScale3D":
 	{
@@ -448,7 +448,7 @@
 	"onComponentDeactivated": "()"
 }
 [AdditiveObject:MoonDirectionalLight]{
-	"shadowCascadeBiasDistribution": 0.86320197582244873,
+	"shadowCascadeBiasDistribution": 1,
 	"bEnableLightShaftOcclusion": false,
 	"occlusionMaskDarkness": 0.05000000074505806,
 	"occlusionDepthRange": 100000,
@@ -519,7 +519,7 @@
 	"temperature": 6500,
 	"maxDrawDistance": 0,
 	"maxDistanceFadeRange": 0,
-	"bUseTemperature": true,
+	"bUseTemperature": false,
 	"specularScale": 1,
 	"shadowResolutionScale": 1,
 	"shadowBias": 0.5,
@@ -564,7 +564,7 @@
 	"bUseRayTracedDistanceFieldShadows": true,
 	"rayStartOffsetDepthScale": 0.0030000000260770321,
 	"lightGuid": "00000000000000000000000000000000",
-	"intensity": 185.41021728515625,
+	"intensity": 60,
 	"lightColor":
 	{
 		"b": 255,
@@ -587,7 +587,7 @@
 	"indirectLightingIntensity": 1,
 	"volumetricScatteringIntensity": 1,
 	"samplesPerPixel": 1,
-	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"attachSocketName": "None",
 	"relativeLocation":
 	{
@@ -597,9 +597,9 @@
 	},
 	"relativeRotation":
 	{
-		"pitch": -44.270874023437521,
-		"yaw": -36.322296142578139,
-		"roll": 0
+		"pitch": 29.0892848968506,
+		"yaw": 137.99746704101562,
+		"roll": 1.8198242184654278e-15
 	},
 	"relativeScale3D":
 	{
@@ -690,7 +690,7 @@
 	"cloudAmbientOcclusionApertureScale": 0.05000000074505806,
 	"occlusionCombineMode": "OCM_Minimum",
 	"lightGuid": "00000000000000000000000000000000",
-	"intensity": 0.10000000149011612,
+	"intensity": 0.71953308582305908,
 	"lightColor":
 	{
 		"b": 255,
@@ -713,7 +713,7 @@
 	"indirectLightingIntensity": 1,
 	"volumetricScatteringIntensity": 1,
 	"samplesPerPixel": 4,
-	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"attachSocketName": "None",
 	"relativeLocation":
 	{
@@ -804,7 +804,7 @@
 		"a": 30.211479187011719
 	},
 	"rayleighExponentialDistribution": 8,
-	"mieScatteringScale": 0.28841465711593628,
+	"mieScatteringScale": 0.20240241289138794,
 	"mieScattering":
 	{
 		"r": 1,
@@ -850,7 +850,7 @@
 	"bHoldout": false,
 	"bRenderInMainPass": true,
 	"bStaticLightingBuiltGUId": "2532A77A45D0421C7C83F7AA42FB7C68",
-	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"attachSocketName": "None",
 	"relativeLocation":
 	{
@@ -920,7 +920,7 @@
 	"onComponentDeactivated": "()"
 }
 [AdditiveObject:HeightFog]{
-	"fogDensity": 0.010456639342010021,
+	"fogDensity": 0.014999999664723873,
 	"fogHeightFalloff": 0.20000000298023224,
 	"secondFogData":
 	{
@@ -989,7 +989,7 @@
 	"bOverrideLightColorsWithFogInscatteringColors": false,
 	"bHoldout": false,
 	"bRenderInMainPass": true,
-	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"attachSocketName": "None",
 	"relativeLocation":
 	{
@@ -1300,7 +1300,7 @@
 	"customDepthStencilWriteMask": "ERSM_Default",
 	"excludeFromHLODLevels": 0,
 	"lODParentPrimitive": "None",
-	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"attachSocketName": "None",
 	"relativeLocation":
 	{
@@ -1611,7 +1611,7 @@
 	"customDepthStencilWriteMask": "ERSM_Default",
 	"excludeFromHLODLevels": 0,
 	"lODParentPrimitive": "None",
-	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"attachSocketName": "None",
 	"relativeLocation":
 	{
@@ -1892,7 +1892,7 @@
 		"bloomMethod": "BM_SOG",
 		"autoExposureMethod": "AEM_Histogram",
 		"temperatureType": "TEMP_WhiteBalance",
-		"whiteTemp": 6284.134765625,
+		"whiteTemp": 6276.8310546875,
 		"whiteTint": 0,
 		"colorSaturation":
 		{
@@ -2180,8 +2180,8 @@
 		"autoExposureMeterMask": "None",
 		"autoExposureLowPercent": 10,
 		"autoExposureHighPercent": 90,
-		"autoExposureMinBrightness": 0.21345853805541992,
-		"autoExposureMaxBrightness": 6.6970663070678711,
+		"autoExposureMinBrightness": 4.7195329666137695,
+		"autoExposureMaxBrightness": 11.439065933227539,
 		"autoExposureSpeedUp": 1.5,
 		"autoExposureSpeedDown": 0.80000001192092896,
 		"histogramLogMin": -10,
@@ -2336,7 +2336,7 @@
 	"blendWeight": 1,
 	"bEnabled": true,
 	"bUnbound": true,
-	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/UEDPIE_0_Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
+	"attachParent": "/Script/Engine.SceneComponent'/Game/KR_Maps/Main.Main:PersistentLevel.SeedExt_Sun_1.Root'",
 	"attachSocketName": "None",
 	"relativeLocation":
 	{

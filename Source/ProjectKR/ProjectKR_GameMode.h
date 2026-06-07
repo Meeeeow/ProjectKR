@@ -25,5 +25,6 @@ public:
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
-	
+private:
+	void OnPlayerDataLoaded(APlayerController* InPlayerController, const bool bIsSuccess, const class USeedExt_SaveDataBase* InSaveData);
 };
