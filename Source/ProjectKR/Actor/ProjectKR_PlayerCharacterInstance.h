@@ -40,7 +40,11 @@ protected:
 	TObjectPtr<class UCameraComponent> CameraComponent = nullptr;
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="KR|Components")
 	TObjectPtr<class UProjectKR_AbilitySystemComponent> AbilitySystemComponent = nullptr;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="KR|Components")
+	TObjectPtr<class UProjectKR_AttributeSet> AttributeSet = nullptr;
 
+	UPROPERTY(EditDefaultsOnly,Category="KR|Components")
+	TMap<FGameplayTag, TSubclassOf<class UGameplayAbility>> GameplayAbility_List; 
 public:
 	virtual void HandleMoveInput(const FVector2D& InAxis) override;
 	virtual void HandleLookInput(const FVector2D& InAxis) override;

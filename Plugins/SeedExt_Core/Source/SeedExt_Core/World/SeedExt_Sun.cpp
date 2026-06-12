@@ -42,7 +42,7 @@ ASeedExt_Sun::ASeedExt_Sun()
 	// SkyLight
 	SkyLightComponent = CreateDefaultSubobject<USkyLightComponent>(TEXT("SkyLight"));
 	SkyLightComponent->SetupAttachment(Root);
-	SkyLightComponent->bRealTimeCapture = false;
+	SkyLightComponent->bRealTimeCapture = true;
 	SkyLightComponent->SourceType = ESkyLightSourceType::SLS_CapturedScene;
 	SkyLightComponent->Intensity = 1.0f;
  
@@ -125,9 +125,7 @@ void ASeedExt_Sun::Tick(float DeltaTime)
 
 	const bool bIsDayTime = CurrentSunState.IsDayTime();
 	if(bWasDayTime != bIsDayTime)
-	{
 		OnSunriseDelegator.Broadcast(bIsDayTime);
-	}
 
 	BiomeInfluenceAccum += DeltaTime;
 	if(BiomeInfluenceAccum >= BiomeUpdateInterval)
@@ -143,16 +141,16 @@ void ASeedExt_Sun::Tick(float DeltaTime)
 		}
 	}
 
-	const bool bIsCaptured = (LastSkyCaptureElevationAngle != -FLT_MAX);
-	const bool bIsCaptureSky = bIsCaptured==false || CurrentSunState.ElevationAngle>-12.f;
-	if(bIsCaptureSky == false)
-		return;
-	
-	if(const float ElevationDelta = FMath::Abs(CurrentSunState.ElevationAngle - LastSkyCaptureElevationAngle); ElevationDelta >= SkyRecaptureThresholdDegree)
-	{
-		SkyLightComponent->RecaptureSky();
-		LastSkyCaptureElevationAngle = CurrentSunState.ElevationAngle;
-	}
+	// const bool bIsCaptured = (LastSkyCaptureElevationAngle != -FLT_MAX);
+	// const bool bIsCaptureSky = bIsCaptured==false || CurrentSunState.ElevationAngle>-12.f;
+	// if(bIsCaptureSky == false)
+	// 	return;
+	//
+	// if(const float ElevationDelta = FMath::Abs(CurrentSunState.ElevationAngle - LastSkyCaptureElevationAngle); ElevationDelta >= SkyRecaptureThresholdDegree)
+	// {
+	// 	SkyLightComponent->RecaptureSky();
+	// 	LastSkyCaptureElevationAngle = CurrentSunState.ElevationAngle;
+	// }
 	
 }
 

@@ -28,6 +28,7 @@ public class ProjectKREditor : ModuleRules
 			"GameplayTags",
 			"GameplayTagsEditor",
 			"GameplayTasks",
+			"Blutility",
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] 

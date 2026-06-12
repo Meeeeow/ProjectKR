@@ -1,0 +1,1978 @@
+{
+	"animBlueprintExtension_PropertyAccess":
+	{
+	},
+	"animBlueprintExtension_BlendSpaceGraph":
+	{
+	},
+	"animBlueprintExtension_Base":
+	{
+	},
+	"animGraphNode_Root":
+	{
+		"result":
+		{
+			"linkId": 34,
+			"sourceLinkId": 0
+		},
+		"name": "AnimGraph",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_TransitionResult_3":
+	{
+		"bCanEnterTransition": false,
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_TransitionResult_2":
+	{
+		"bCanEnterTransition": false,
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_TransitionResult_1":
+	{
+		"bCanEnterTransition": false,
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_TransitionResult":
+	{
+		"bCanEnterTransition": false,
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_10":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Right_R.anim_Jog_Loop_Right_R'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_9":
+	{
+		"result":
+		{
+			"linkId": 5,
+			"sourceLinkId": 6
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_9":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Left_L.anim_Jog_Loop_Left_L'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_8":
+	{
+		"result":
+		{
+			"linkId": 7,
+			"sourceLinkId": 8
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_8":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Fwd.anim_Jog_Loop_Fwd'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_7":
+	{
+		"result":
+		{
+			"linkId": 9,
+			"sourceLinkId": 10
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_7":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Bwd.anim_Jog_Loop_Bwd'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_6":
+	{
+		"result":
+		{
+			"linkId": 11,
+			"sourceLinkId": 12
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_6":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Bwd.anim_Jog_Loop_Bwd'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_5":
+	{
+		"result":
+		{
+			"linkId": 13,
+			"sourceLinkId": 14
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceGraph_1":
+	{
+		"x": 0,
+		"y": 0,
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"blendSpace": "/Script/Engine.BlendSpace'/Game/KR_Actor/Animation/KR_ABP_Actor.KR_ABP_Actor_C:KR_BlendSpace_Run'",
+		"samplePoseLinks": [
+			{
+				"linkId": 14,
+				"sourceLinkId": 15
+			},
+			{
+				"linkId": 12,
+				"sourceLinkId": 15
+			},
+			{
+				"linkId": 10,
+				"sourceLinkId": 15
+			},
+			{
+				"linkId": 8,
+				"sourceLinkId": 15
+			},
+			{
+				"linkId": 6,
+				"sourceLinkId": 15
+			}
+		],
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_StateResult_2":
+	{
+		"stateIndex": 2,
+		"stateEntryFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateFullyBlendedInFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateExitFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateFullyBlendedOutFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"result":
+		{
+			"linkId": 15,
+			"sourceLinkId": 16
+		},
+		"name": "Run",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_5":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Bwd_Loop_R.anim_Walk_Bwd_Loop_R'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_4":
+	{
+		"result":
+		{
+			"linkId": 17,
+			"sourceLinkId": 18
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_4":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Right_Loop.anim_Walk_Right_Loop'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_3":
+	{
+		"result":
+		{
+			"linkId": 19,
+			"sourceLinkId": 20
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_3":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Left_Loop.anim_Walk_Left_Loop'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_2":
+	{
+		"result":
+		{
+			"linkId": 21,
+			"sourceLinkId": 22
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_2":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Fwd_Loop_L.anim_Walk_Fwd_Loop_L'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult_1":
+	{
+		"result":
+		{
+			"linkId": 23,
+			"sourceLinkId": 24
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer_1":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "Graph",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Bwd_Loop_L.anim_Walk_Bwd_Loop_L'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceSampleResult":
+	{
+		"result":
+		{
+			"linkId": 25,
+			"sourceLinkId": 26
+		},
+		"name": "None",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_BlendSpaceGraph":
+	{
+		"x": 0,
+		"y": 0,
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"blendSpace": "/Script/Engine.BlendSpace'/Game/KR_Actor/Animation/KR_ABP_Actor.KR_ABP_Actor_C:KR_BlendSpace_Walk'",
+		"samplePoseLinks": [
+			{
+				"linkId": 26,
+				"sourceLinkId": 27
+			},
+			{
+				"linkId": 24,
+				"sourceLinkId": 27
+			},
+			{
+				"linkId": 22,
+				"sourceLinkId": 27
+			},
+			{
+				"linkId": 20,
+				"sourceLinkId": 27
+			},
+			{
+				"linkId": 18,
+				"sourceLinkId": 27
+			}
+		],
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_StateResult_1":
+	{
+		"stateIndex": 1,
+		"stateEntryFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateFullyBlendedInFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateExitFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateFullyBlendedOutFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"result":
+		{
+			"linkId": 27,
+			"sourceLinkId": 28
+		},
+		"name": "Walk",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_SequencePlayer":
+	{
+		"groupName": "None",
+		"groupRole": "CanBeLeader",
+		"method": "DoNotSync",
+		"bIgnoreForRelevancyTest": false,
+		"sequence": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Idle/anim_Idle.anim_Idle'",
+		"playRateBasis": 1,
+		"playRate": 1,
+		"playRateScaleBiasClampConstants":
+		{
+			"bMapRange": false,
+			"bClampResult": false,
+			"bInterpResult": false,
+			"inRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"outRange":
+			{
+				"min": 0,
+				"max": 1
+			},
+			"scale": 1,
+			"bias": 0,
+			"clampMin": 0,
+			"clampMax": 1,
+			"interpSpeedIncreasing": 10,
+			"interpSpeedDecreasing": 10
+		},
+		"startPosition": 0,
+		"bLoopAnimation": true,
+		"bStartFromMatchingPose": false,
+		"playRateScaleBiasClampState":
+		{
+		},
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_StateResult":
+	{
+		"stateIndex": 0,
+		"stateEntryFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateFullyBlendedInFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateExitFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"stateFullyBlendedOutFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"result":
+		{
+			"linkId": 29,
+			"sourceLinkId": 30
+		},
+		"name": "Idle",
+		"layerGroup": "DefaultSharedGroup",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_StateMachine":
+	{
+		"stateMachineIndexInClass": 0,
+		"maxTransitionsPerFrame": 3,
+		"maxTransitionsRequests": 32,
+		"bSkipFirstUpdateTransition": true,
+		"bReinitializeOnBecomingRelevant": true,
+		"bCreateNotifyMetaData": true,
+		"bAllowConduitEntryStates": false,
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_Slot_1":
+	{
+		"source":
+		{
+			"linkId": -1,
+			"sourceLinkId": -1
+		},
+		"slotName": "UpperBody",
+		"bAlwaysUpdateSourcePose": false,
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_Slot":
+	{
+		"source":
+		{
+			"linkId": 31,
+			"sourceLinkId": 33
+		},
+		"slotName": "FullBody",
+		"bAlwaysUpdateSourcePose": false,
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"animGraphNode_LayeredBoneBlend":
+	{
+		"basePose":
+		{
+			"linkId": 33,
+			"sourceLinkId": 34
+		},
+		"blendPoses": [
+			{
+				"linkId": 32,
+				"sourceLinkId": 34
+			}
+		],
+		"blendMode": "BranchFilter",
+		"blendMasks": [],
+		"layerSetup": [
+			{
+				"branchFilters": []
+			}
+		],
+		"blendWeights": [ 1 ],
+		"bMeshSpaceRotationBlend": false,
+		"bMeshSpaceScaleBlend": false,
+		"curveBlendOption": "Override",
+		"bBlendRootMotionBasedOnRootBone": true,
+		"lODThreshold": -1,
+		"perBoneBlendWeights": [
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			},
+			{
+				"sourceIndex": 0,
+				"blendWeight": 0
+			}
+		],
+		"skeletonGuid": "C677BE3C40FC5117B0467AA9168F9362",
+		"virtualBoneGuid": "6E25ACE747AA82697EC32F927E85F862",
+		"initialUpdateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"becomeRelevantFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		},
+		"updateFunction":
+		{
+			"className": "None",
+			"functionName": "None"
+		}
+	},
+	"anim_Idle": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Idle/anim_Idle.anim_Idle'",
+	"anim_Walk":
+	{
+		"animation_List":
+		{
+			"forward": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Fwd_Loop_L.anim_Walk_Fwd_Loop_L'",
+			"backward": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Bwd_Loop_L.anim_Walk_Bwd_Loop_L'",
+			"left": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Left_Loop.anim_Walk_Left_Loop'",
+			"right": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Right_Loop.anim_Walk_Right_Loop'"
+		},
+		"anim_BlendSpace": "/Script/Engine.BlendSpace'/Game/KR_Actor/Animation/KR_BlendSpace_Walk.KR_BlendSpace_Walk'"
+	},
+	"anim_Run":
+	{
+		"animation_List":
+		{
+			"forward": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Fwd.anim_Jog_Loop_Fwd'",
+			"backward": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Bwd.anim_Jog_Loop_Bwd'",
+			"left": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Left_L.anim_Jog_Loop_Left_L'",
+			"right": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Jog/anim_Jog_Loop_Right_R.anim_Jog_Loop_Right_R'"
+		},
+		"anim_BlendSpace": "/Script/Engine.BlendSpace'/Game/KR_Actor/Animation/KR_BlendSpace_Run.KR_BlendSpace_Run'"
+	},
+	"speed": 0,
+	"direction": 0,
+	"bIsMove": false,
+	"bIsFall": false,
+	"runStateSpeed": 300,
+	"rootMotionMode": "RootMotionFromMontagesOnly",
+	"bUseMultiThreadedAnimationUpdate": true,
+	"bUsingCopyPoseFromMesh": false,
+	"bReceiveNotifiesFromLinkedInstances": false,
+	"bPropagateNotifiesToLinkedInstances": false,
+	"bUseMainInstanceMontageEvaluationData": false,
+	"onMontageBlendingOut": "()",
+	"onMontageBlendedIn": "()",
+	"onMontageStarted": "()",
+	"onMontageEnded": "()",
+	"onAllMontageInstancesEnded": "()",
+	"postCompileValidationClassName": "None"
+}

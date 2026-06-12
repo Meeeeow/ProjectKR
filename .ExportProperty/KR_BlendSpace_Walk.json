@@ -1,0 +1,181 @@
+{
+	"bContainsRotationOffsetMeshSpaceSamples": false,
+	"interpolationParam": [
+		{
+			"interpolationTime": 0.20000000298023224,
+			"dampingRatio": 1,
+			"maxSpeed": 0,
+			"interpolationType": "BSIT_SpringDamper"
+		},
+		{
+			"interpolationTime": 0.15000000596046448,
+			"dampingRatio": 1,
+			"maxSpeed": 0,
+			"interpolationType": "BSIT_SpringDamper"
+		},
+		{
+			"interpolationTime": 0,
+			"dampingRatio": 1,
+			"maxSpeed": 0,
+			"interpolationType": "BSIT_SpringDamper"
+		}
+	],
+	"analysisProperties": [
+		"None",
+		"None",
+		"None"
+	],
+	"targetWeightInterpolationSpeedPerSec": 0,
+	"bTargetWeightInterpolationEaseInOut": true,
+	"bAllowMeshSpaceBlending": false,
+	"bLoop": true,
+	"previewBasePose": "None",
+	"animLength": 1.1000000238418579,
+	"notifyTriggerMode": "HighestWeightedAnimation",
+	"bInterpolateUsingGrid": true,
+	"preferredTriangulationDirection": "Tangential",
+	"perBoneBlendMode": "ManualPerBoneOverride",
+	"manualPerBoneOverrides": [],
+	"perBoneBlendProfile":
+	{
+		"blendProfile": "None",
+		"targetWeightInterpolationSpeedPerSec": 0
+	},
+	"sampleIndexWithMarkers": -1,
+	"sampleData": [
+		{
+			"animation": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Bwd_Loop_L.anim_Walk_Bwd_Loop_L'",
+			"sampleValue":
+			{
+				"x": -180,
+				"y": 300,
+				"z": 0
+			},
+			"rateScale": 1,
+			"bIncludeInAnalyseAll": false
+		},
+		{
+			"animation": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Fwd_Loop_L.anim_Walk_Fwd_Loop_L'",
+			"sampleValue":
+			{
+				"x": 0,
+				"y": 300,
+				"z": 0
+			},
+			"rateScale": 1,
+			"bIncludeInAnalyseAll": false
+		},
+		{
+			"animation": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Left_Loop.anim_Walk_Left_Loop'",
+			"sampleValue":
+			{
+				"x": -90,
+				"y": 300,
+				"z": 0
+			},
+			"rateScale": 1,
+			"bIncludeInAnalyseAll": false
+		},
+		{
+			"animation": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Right_Loop.anim_Walk_Right_Loop'",
+			"sampleValue":
+			{
+				"x": 90,
+				"y": 300,
+				"z": 0
+			},
+			"rateScale": 1,
+			"bIncludeInAnalyseAll": false
+		},
+		{
+			"animation": "/Script/Engine.AnimSequence'/Game/FreeAnimationLibrary/Animations/Walk/anim_Walk_Bwd_Loop_R.anim_Walk_Bwd_Loop_R'",
+			"sampleValue":
+			{
+				"x": 180,
+				"y": 300,
+				"z": 0
+			},
+			"rateScale": 1,
+			"bIncludeInAnalyseAll": false
+		}
+	],
+	"gridSamples": [
+		{
+			"indices": [ 2, 0, -1 ],
+			"weights": [ 0, 1, 0 ]
+		},
+		{
+			"indices": [ 2, 0, -1 ],
+			"weights": [ 0.5, 0.5, 0 ]
+		},
+		{
+			"indices": [ 2, 0, -1 ],
+			"weights": [ 1, 0, 0 ]
+		},
+		{
+			"indices": [ 1, 2, -1 ],
+			"weights": [ 0.5, 0.5, 0 ]
+		},
+		{
+			"indices": [ 1, 2, -1 ],
+			"weights": [ 1, 0, 0 ]
+		},
+		{
+			"indices": [ 3, 1, -1 ],
+			"weights": [ 0.5, 0.5, 0 ]
+		},
+		{
+			"indices": [ 3, 1, -1 ],
+			"weights": [ 1, 0, 0 ]
+		},
+		{
+			"indices": [ 4, 3, -1 ],
+			"weights": [ 0.5, 0.5, 0 ]
+		},
+		{
+			"indices": [ 4, 3, -1 ],
+			"weights": [ 1, 0, 0 ]
+		}
+	],
+	"blendSpaceData":
+	{
+		"segments": [],
+		"triangles": []
+	},
+	"blendParameters": [
+		{
+			"displayName": "Direction",
+			"min": -180,
+			"max": 180,
+			"gridNum": 8,
+			"bSnapToGrid": true,
+			"bWrapInput": false
+		},
+		{
+			"displayName": "Speed",
+			"min": 0,
+			"max": 300,
+			"gridNum": 4,
+			"bSnapToGrid": true,
+			"bWrapInput": false
+		},
+		{
+			"displayName": "None",
+			"min": 0,
+			"max": 100,
+			"gridNum": 4,
+			"bSnapToGrid": false,
+			"bWrapInput": false
+		}
+	],
+	"axisToScaleAnimation": "BSA_None",
+	"dimensionIndices": [ 0 ],
+	"skeleton": "/Script/Engine.Skeleton'/Game/Characters/Mannequins/Meshes/SK_Mannequin.SK_Mannequin'",
+	"metaData": [],
+	"parentAsset": "None",
+	"assetMappingTable": "None",
+	"assetUserData": [],
+	"thumbnailInfo": "None",
+	"previewPoseAsset": "None",
+	"previewSkeletalMesh": "None"
+}

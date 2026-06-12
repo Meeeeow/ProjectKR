@@ -52,4 +52,16 @@ protected:
 	FSeedExt_DirectionAnimLocomotionInfo Anim_Walk;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="SeedExt|Locomotion")
 	FSeedExt_DirectionAnimLocomotionInfo Anim_Run;
+
+	UPROPERTY(BlueprintReadOnly,Category="SeedExt|Locomotion")
+	float Speed = 0.f;
+	UPROPERTY(BlueprintReadOnly,Category="SeedExt|Locomotion")
+	float Direction = 0.f;
+	UPROPERTY(BlueprintReadOnly,Category="SeedExt|Locomotion")
+	bool bIsMove = false;
+	UPROPERTY(BlueprintReadOnly,Category="SeedExt|Locomotion")
+	bool bIsFall = false;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="SeedExt|Locomotion")
+	float RunStateSpeed = 300.f;
 };

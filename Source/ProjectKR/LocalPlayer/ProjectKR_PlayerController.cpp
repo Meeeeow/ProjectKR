@@ -10,6 +10,7 @@
 #include "GameFramework/GameModeBase.h"
 
 #include "ProjectKR/ProjectKR_LocalPlayer.h"
+#include "ProjectKR/Ability/ProjectKR_AbilitySystemComponent.h"
 #include "ProjectKR/Ability/ProjectKR_GameplayTags.h"
 
 #include "SeedExt_Core/SubSystem/SeedExt_SubSystemCollector.h"
@@ -64,8 +65,6 @@ void AProjectKR_PlayerController::OnCharacterSpawnFail(FSeedExt_CharacterHandle 
 
 void AProjectKR_PlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	UnbindInputEvent();
-	
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -110,46 +109,6 @@ void AProjectKR_PlayerController::Server_RequestSpawn_Implementation(const FSoft
 	ActorSpawnRequestInfo.SpawnFailDelegate = &SpawnFailDelegate;
 
 	ActorManager->SpawnCharacter(InCharacterPath, ActorSpawnRequestInfo);
-}
-
-void AProjectKR_PlayerController::BindInputEvent()
-{
-	if(UProjectKR_InputSubSystem* InputSubSystem = ProjectKR_GetInputManager(GetWorld()))
-	{
-		InputSubSystem->SetPlayerController(this);
-		const FProjectKR_InputSource* InputSource = InputSubSystem->GetPlayingInputConfigSource();
-		if(UEnhancedInputLocalPlayerSubsystem* EnhancedInputSubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
-		{
-			EnhancedInputSubSystem->AddMappingContext(InputSource->InputMappingContext, 0);
-			if(UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
-			{
-				for(TMap<FName, UInputAction*>::TConstIterator It(InputSource->InputAction_List); It; ++It)
-				{
-					FName FunctionName = FName(FString::Printf(TEXT("OnHandleInput%s"),*It->Key.ToString()));
-					EnhancedInputComponent->BindAction(It->Value, ETriggerEvent::Triggered, this, FunctionName);
-					EnhancedInputComponent->BindAction(It->Value, ETriggerEvent::Started, this, FunctionName);
-					EnhancedInputComponent->BindAction(It->Value, ETriggerEvent::Canceled, this, FunctionName);
-					EnhancedInputComponent->BindAction(It->Value, ETriggerEvent::Completed, this, FunctionName);
-				}
-			}
-		}
-	}
-}
-void AProjectKR_PlayerController::UnbindInputEvent()
-{
-}
-
-void AProjectKR_PlayerController::OnHandleInputMove(const struct FInputActionValue& InInputActionValue)
-{
-	
-}
-void AProjectKR_PlayerController::OnHandleInputLook(const struct FInputActionValue& InInputActionValue)
-{
-	
-}
-void AProjectKR_PlayerController::OnHandleInputJump(const struct FInputActionValue& InInputActionValue)
-{
-	
 }
 
 void AProjectKR_PlayerController::BindInputAction(class UEnhancedInputComponent* InEnhancedInputComponent)
@@ -223,7 +182,7 @@ void AProjectKR_PlayerController::UnbindInputAction()
 	
 }
 
-void AProjectKR_PlayerController::Input_Move(const struct FInputActionValue& InInputActionValue)
+void AProjectKR_PlayerController::Input_Move(const FInputActionValue& InInputActionValue)
 {
 	AProjectKR_PlayerCharacterInstance* PlayerCharacterInstance = GetPlayerCharacterInstance();
 	if(PlayerCharacterInstance == nullptr)
@@ -231,7 +190,7 @@ void AProjectKR_PlayerController::Input_Move(const struct FInputActionValue& InI
 
 	PlayerCharacterInstance->HandleMoveInput(InInputActionValue.Get<FVector2D>());
 }
-void AProjectKR_PlayerController::Input_Look(const struct FInputActionValue& InInputActionValue)
+void AProjectKR_PlayerController::Input_Look(const FInputActionValue& InInputActionValue)
 {
 	AProjectKR_PlayerCharacterInstance* PlayerCharacterInstance = GetPlayerCharacterInstance();
 	if(PlayerCharacterInstance == nullptr)
@@ -239,19 +198,39 @@ void AProjectKR_PlayerController::Input_Look(const struct FInputActionValue& InI
 
 	PlayerCharacterInstance->HandleLookInput(InInputActionValue.Get<FVector2D>());
 }
-void AProjectKR_PlayerController::Input_JumpStart(const struct FInputActionValue& InInputActionValue)
+void AProjectKR_PlayerController::Input_JumpStart(const FInputActionValue& InInputActionValue)
 {
+	AProjectKR_PlayerCharacterInstance* PlayerCharacterInstance = GetPlayerCharacterInstance();
+	if(PlayerCharacterInstance == nullptr)
+		return;
+
+	PlayerCharacterInstance->HandleJumpStart();
 }
-void AProjectKR_PlayerController::Input_JumpComplete(const struct FInputActionValue& InInputActionValue)
+void AProjectKR_PlayerController::Input_JumpComplete(const FInputActionValue& InInputActionValue)
 {
+	AProjectKR_PlayerCharacterInstance* PlayerCharacterInstance = GetPlayerCharacterInstance();
+	if(PlayerCharacterInstance == nullptr)
+		return;
+
+	PlayerCharacterInstance->HandleJumpStop();
 }
 
 void AProjectKR_PlayerController::Input_AbilityInputTagPressed(FGameplayTag InGameplayTag)
 {
-	
+	AProjectKR_PlayerCharacterInstance* PlayerCharacterInstance = GetPlayerCharacterInstance();
+	if(PlayerCharacterInstance == nullptr)
+		return;
+
+	if(UProjectKR_AbilitySystemComponent* AbilitySystemComponent = Cast<UProjectKR_AbilitySystemComponent>(PlayerCharacterInstance->GetAbilitySystemComponent()))
+		AbilitySystemComponent->InputTagPressed(InGameplayTag);
 }
 void AProjectKR_PlayerController::Input_AbilityInputTagReleased(FGameplayTag InGameplayTag)
 {
-	
+	AProjectKR_PlayerCharacterInstance* PlayerCharacterInstance = GetPlayerCharacterInstance();
+	if(PlayerCharacterInstance == nullptr)
+		return;
+
+	if(UProjectKR_AbilitySystemComponent* AbilitySystemComponent = Cast<UProjectKR_AbilitySystemComponent>(PlayerCharacterInstance->GetAbilitySystemComponent()))
+		AbilitySystemComponent->InputTagReleased(InGameplayTag);
 }
 

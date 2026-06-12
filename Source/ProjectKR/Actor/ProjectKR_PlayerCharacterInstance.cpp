@@ -12,6 +12,7 @@
 
 #include "ProjectKR/Ability/ProjectKR_AbilityInputConfig.h"
 #include "ProjectKR/Ability/ProjectKR_AbilitySystemComponent.h"
+#include "ProjectKR/Ability/ProjectKR_AttributeSet.h"
 
 AProjectKR_PlayerCharacterInstance::AProjectKR_PlayerCharacterInstance()
 {
@@ -23,11 +24,11 @@ AProjectKR_PlayerCharacterInstance::AProjectKR_PlayerCharacterInstance()
 	
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
-	bUseControllerRotationYaw = false;
+	bUseControllerRotationYaw = true;
 
 	if(UCharacterMovementComponent* MovementComponent = GetCharacterMovement())
 	{
-		MovementComponent->bOrientRotationToMovement = true;
+		MovementComponent->bOrientRotationToMovement = false;
 		MovementComponent->RotationRate = FRotator(0.f, 540.f, 0.f);
 		MovementComponent->JumpZVelocity = 600.f;
 		MovementComponent->AirControl = 0.35f;
@@ -45,7 +46,7 @@ AProjectKR_PlayerCharacterInstance::AProjectKR_PlayerCharacterInstance()
 		SpringArmComponent->bUsePawnControlRotation = true;
 		SpringArmComponent->bEnableCameraLag = true;
 		SpringArmComponent->CameraLagSpeed = 12.f;
-		SpringArmComponent->bDoCollisionTest = true;
+		SpringArmComponent->bDoCollisionTest = false;
 	}
 	
 	{
@@ -54,7 +55,7 @@ AProjectKR_PlayerCharacterInstance::AProjectKR_PlayerCharacterInstance()
 			CameraComponent = CreateDefaultSubobject<UCameraComponent>(CameraComponentName);
 
 		CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
-		CameraComponent->bUsePawnControlRotation = true;
+		CameraComponent->bUsePawnControlRotation = false;
 	}
 
 	{
@@ -64,6 +65,12 @@ AProjectKR_PlayerCharacterInstance::AProjectKR_PlayerCharacterInstance()
 
 		AbilitySystemComponent->SetIsReplicated(true);
 		AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
+	}
+
+	{
+		static FName AttributeSetComponentName(TEXT("KR_AttributeSet"));
+		if(AttributeSet == nullptr)
+			AttributeSet = CreateDefaultSubobject<UProjectKR_AttributeSet>(AttributeSetComponentName);
 	}
 }
 
@@ -79,6 +86,22 @@ void AProjectKR_PlayerCharacterInstance::EndPlay(const EEndPlayReason::Type EndP
 void AProjectKR_PlayerCharacterInstance::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+
+	if(AbilitySystemComponent != nullptr)
+	{
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
+
+		if(HasAuthority() == false)
+			return;
+
+		for(const TPair<FGameplayTag, TSubclassOf<UGameplayAbility>>& GameplayAbility : GameplayAbility_List)
+		{
+			if(GameplayAbility.Value == nullptr)
+				continue;
+
+			AbilitySystemComponent->GiveAbilityWithInputTag(GameplayAbility.Value, GameplayAbility.Key);
+		}
+	}
 }
 void AProjectKR_PlayerCharacterInstance::UnPossessed()
 {
@@ -88,6 +111,9 @@ void AProjectKR_PlayerCharacterInstance::UnPossessed()
 void AProjectKR_PlayerCharacterInstance::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
+
+	if(AbilitySystemComponent != nullptr)
+		AbilitySystemComponent->InitAbilityActorInfo(this, this);
 }
 
 void AProjectKR_PlayerCharacterInstance::Tick(float DeltaTime)
@@ -119,14 +145,15 @@ void AProjectKR_PlayerCharacterInstance::HandleMoveInput(const FVector2D& InAxis
 void AProjectKR_PlayerCharacterInstance::HandleLookInput(const FVector2D& InAxis)
 {
 	AddControllerYawInput(InAxis.X);
-	AddControllerPitchInput(InAxis.Y);
+	AddControllerPitchInput(-InAxis.Y);
+	UE_LOG(LogTemp, Display, TEXT("Input [Yaw:%f] [Pitch:%f]"),InAxis.X, InAxis.Y);
 }
 void AProjectKR_PlayerCharacterInstance::HandleJumpStart()
 {
-	
+	Jump();
 }
 void AProjectKR_PlayerCharacterInstance::HandleJumpStop()
 {
-	
+	StopJumping();
 }
 

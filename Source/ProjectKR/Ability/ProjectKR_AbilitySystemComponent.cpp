@@ -65,7 +65,7 @@ FGameplayAbilitySpecHandle UProjectKR_AbilitySystemComponent::GiveAbilityWithInp
 		return FGameplayAbilitySpecHandle();
 
 	FGameplayAbilitySpec AbilitySpec(InAbilityClass, InLevel, INDEX_NONE, this);
-	if(InInputTag.IsValid() == false)
+	if(InInputTag.IsValid() == true)
 		AbilitySpec.DynamicAbilityTags.AddTag(InInputTag);
 
 	return GiveAbility(AbilitySpec);

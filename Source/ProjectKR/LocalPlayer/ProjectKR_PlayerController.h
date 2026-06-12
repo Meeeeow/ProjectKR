@@ -31,14 +31,6 @@ public:
 	UFUNCTION(Server,Reliable)
 	void Server_RequestSpawn(const FSoftObjectPath& InCharacterPath);
 
-protected:
-	void BindInputEvent();
-	void UnbindInputEvent();
-	
-	UFUNCTION() void OnHandleInputMove(const struct FInputActionValue& InInputActionValue);
-	UFUNCTION() void OnHandleInputLook(const struct FInputActionValue& InInputActionValue);
-	UFUNCTION() void OnHandleInputJump(const struct FInputActionValue& InInputActionValue);
-
 private:
 	void BindInputAction(class UEnhancedInputComponent* InEnhancedInputComponent);
 	void UnbindInputAction();
